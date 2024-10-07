@@ -4,6 +4,6 @@ namespace ZeTaim
 {
     public interface IServiceProvider
     {
-        object GetService(Type serviceType);
+        TService GetService<TService>();
     }
 }

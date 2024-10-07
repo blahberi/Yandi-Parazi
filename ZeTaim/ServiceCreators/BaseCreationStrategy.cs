@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace ZeTaim.ServiceCreators
+namespace ZeTaim
 {
     public abstract class BaseCreationStrategy : ICreationStrategy
     {
@@ -11,7 +11,11 @@ namespace ZeTaim.ServiceCreators
         {
             object[] constructorParameters = implementationType.GetConstructors().First()
                 .GetParameters()
-                .Select(p => serviceProvider.GetService(p.ParameterType))
+                .Select(p =>
+                    typeof(IServiceProvider)
+                    .GetMethod(nameof(IServiceProvider.GetService))
+                    .MakeGenericMethod(p.ParameterType)
+                    .Invoke(serviceProvider, null))
                 .ToArray();
             return Activator.CreateInstance(implementationType, constructorParameters);
         }

@@ -11,12 +11,12 @@ namespace Test
                 .RegisterService<IBar, Bar>()
                 .Build();
 
-            IFoo foo1 = (IFoo)serviceProvider.GetService(typeof(IFoo));
-            IFoo foo2 = (IFoo)serviceProvider.GetService(typeof(IFoo));
+            IFoo foo1 = serviceProvider.GetService<IFoo>();
+            IFoo foo2 = serviceProvider.GetService<IFoo>();
             foo1.Method();
             foo2.Method();
 
-            IBar bar = (IBar)serviceProvider.GetService(typeof(IBar));
+            IBar bar = serviceProvider.GetService<IBar>();
             bar.Method(7);
         }
     }

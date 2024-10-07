@@ -21,10 +21,10 @@ namespace ZeTaim
 
         }
 
-        public object GetService(Type serviceType)
+        public TService GetService<TService>()
         {
-            Type implementationType = this.descriptors[serviceType].ServiceImplementation;
-            return this.creators[serviceType].GetInstance(implementationType, this);
+            Type implementationType = this.descriptors[typeof(TService)].ServiceImplementation;
+            return (TService)this.creators[typeof(TService)].GetInstance(implementationType, this);
         }
     }
 }
