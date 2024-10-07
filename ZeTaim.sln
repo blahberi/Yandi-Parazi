@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeTaim", "ZeTaim\ZeTaim.csproj", "{C863BCB5-00D5-4341-9485-CA69CE804F0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{A2E2B2D5-6418-4153-A49B-1AEE9CB42AC9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C863BCB5-00D5-4341-9485-CA69CE804F0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C863BCB5-00D5-4341-9485-CA69CE804F0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C863BCB5-00D5-4341-9485-CA69CE804F0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C863BCB5-00D5-4341-9485-CA69CE804F0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E2B2D5-6418-4153-A49B-1AEE9CB42AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E2B2D5-6418-4153-A49B-1AEE9CB42AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E2B2D5-6418-4153-A49B-1AEE9CB42AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E2B2D5-6418-4153-A49B-1AEE9CB42AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E7754817-2B5C-4C1E-B86D-EB73D38B3622}
+	EndGlobalSection
+EndGlobal
