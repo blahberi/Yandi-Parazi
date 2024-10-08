@@ -6,7 +6,7 @@ namespace ZeTaim.ServiceCreators
     {
         public override object GetInstance(Type implementationType, IServiceProvider serviceProvider)
         {
-            
+            return null;
         }
     }
 }

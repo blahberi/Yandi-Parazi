@@ -48,13 +48,13 @@
     <Compile Include="Foo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ZeTaim\Cornflakes.csproj">
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cornflakes\Cornflakes.csproj">
       <Project>{c863bcb5-00d5-4341-9485-ca69ce804f0d}</Project>
       <Name>Cornflakes</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
