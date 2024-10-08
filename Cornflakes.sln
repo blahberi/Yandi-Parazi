@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeTaim", "ZeTaim\ZeTaim.csproj", "{C863BCB5-00D5-4341-9485-CA69CE804F0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cornflakes", "ZeTaim\Cornflakes.csproj", "{C863BCB5-00D5-4341-9485-CA69CE804F0D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{A2E2B2D5-6418-4153-A49B-1AEE9CB42AC9}"
 EndProject

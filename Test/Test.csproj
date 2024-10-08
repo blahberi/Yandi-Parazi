@@ -48,9 +48,9 @@
     <Compile Include="Foo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ZeTaim\ZeTaim.csproj">
+    <ProjectReference Include="..\ZeTaim\Cornflakes.csproj">
       <Project>{c863bcb5-00d5-4341-9485-ca69ce804f0d}</Project>
-      <Name>ZeTaim</Name>
+      <Name>Cornflakes</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

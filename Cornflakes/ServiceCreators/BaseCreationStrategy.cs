@@ -11,11 +11,7 @@ namespace ZeTaim
         {
             object[] constructorParameters = implementationType.GetConstructors().First()
                 .GetParameters()
-                .Select(p =>
-                    typeof(IServiceProvider)
-                    .GetMethod(nameof(IServiceProvider.GetService))
-                    .MakeGenericMethod(p.ParameterType)
-                    .Invoke(serviceProvider, null))
+                .Select(p => serviceProvider.GetService(p.ParameterType))
                 .ToArray();
             return Activator.CreateInstance(implementationType, constructorParameters);
         }

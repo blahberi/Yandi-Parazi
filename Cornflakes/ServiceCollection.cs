@@ -24,7 +24,10 @@ namespace ZeTaim
 
         public void AddService<TService, TImplementation>() where TImplementation : TService
         {
-            this.Add(new ServiceDescriptor(typeof(TService), typeof(TImplementation)));
+            this.Add(new ServiceDescriptor(
+                typeof(TService), 
+                typeof(TImplementation)
+            ));
         }
 
         public int Count => Services.Count;
