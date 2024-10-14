@@ -143,8 +143,8 @@ using (IScope outerScope = serviceProvider.CreateScope())
         IBaz innerBaz = innerScope.ServiceProvider.GetService<IBaz>();
 
         // outerFoo and innerFoo are different instances
-        Console.WriteLine(outerFoo.GetHashCode()); // Outputs A
-        Console.WriteLine(innerFoo.GetHashCode()); // Outputs B
+        Console.WriteLine(outerBaz.GetHashCode()); // Outputs A
+        Console.WriteLine(innerBaz.GetHashCode()); // Outputs B
     }
 }
 ```
