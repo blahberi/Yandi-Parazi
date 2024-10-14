@@ -61,7 +61,6 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .RegisterSingleton<IFoo, Foo>()
     .RegisterTransient<IBar, Bar>()
     .RegisterScoped<IBaz, Baz>()
-    .RegisterService<IQux, Qux>(new MyCustomCreationStrategy())
     .Build();
 ```
 When registering a service, we specify the **Service Type**, **Service Implementation**, and **Creation Strategy**.
@@ -73,7 +72,6 @@ In the example above, we registered the following services:
 | `IFoo`       | `Foo`                  | Singleton                  |
 | `IBar`       | `Bar`                  | Transient                  |
 | `IBaz`       | `Baz`                  | Scoped                     |
-| `IQux`       | `Qux`                  | `MyCustomCreationStrategy` |
 
 ## Requesting services
 Once our services have been registered through `ServiceProviderBuilder`, we can finalize the service registration process and create the `ServiceProvider` using the `Build()` method.
@@ -179,7 +177,7 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
 ```
 
 ## Custom Creation Strategies
-We can define custom creation strategies by implementing the `ICreationStrategy` interface. Custom creation strategies can be useful when we need to perform some custom logic for handling the lifetime of service instances. As an example, we will implement the `Transient` and `Singleton` creation strategies.
+Custom creation strategies can be useful when we need to perform some custom logic for handling the lifetime of service instances. We can define custom creation strategies by implementing the `ICreationStrategy` interface. As an example, we will implement the `Transient` and `Singleton` creation strategies.
 
 ### Transient Creation Strategy Implementation
 ```csharp
