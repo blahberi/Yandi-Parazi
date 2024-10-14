@@ -202,12 +202,15 @@ class CustomTransientCreation: ICreationStrategy
 ```
 It is good practice to decouple the instantitation logic from the creation strategy by requiring a `ServiceFactory` delegate in the constructor, which allows for custom service factory methods.
 
-Now we can register services using our custom creation strategy.
+Now we can register services using our custom creation strategy. For the examples below, we will assume that `Bar` depends on `IFoo`.
 ```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
+    .RegisterService<IFoo, Foo>(new CustomTransientCreation(
+        DefaultServiceFactory.GetServiceFactory<Foo>())) // Default factory method
     .RegisterService<IBar, Bar>(new CustomTransientCreation((serviceProvider) => {
         // Custom factory method
-        return new Bar();
+        IFoo foo = serviceProvider.GetService<IFoo>();
+        return new Bar(foo);
     }))
     .Build();
 ```
@@ -223,7 +226,6 @@ class CustomSingletonCreation: ICreationStrategy
         this.serviceFactory = serviceFactory;
     }
 
-    IServiceProvider serviceProvider
     public object GetInstance(IServiceProvider serviceProvider)
     {
         if (this.instance == null)
@@ -236,9 +238,12 @@ class CustomSingletonCreation: ICreationStrategy
 
 // Register service with custom Singleton creation strategy
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
+    .RegisterService<IFoo, Foo>(new CustomSingletonCreation(
+        DefaultServiceFactory.GetServiceFactory<Foo>())) // Default factory method
     .RegisterService<IBar, Bar>(new CustomSingletonCreation((serviceProvider) => {
         // Custom factory method
-        return new Bar();
+        IFoo foo = serviceProvider.GetService<IFoo>();
+        return new Bar(foo);
     }))
     .Build();
 ```
@@ -261,7 +266,7 @@ public static class CustomServiceProvideBuilderExtensions
         return builder.RegisterService<TService, TImplementation>(new CustomSingletonCreation(serviceFactory));
     }
 
-    // Use the default service factory method
+    // Extension methods for using the default service factory method
     public static IServiceProviderBuilder RegisterCustomTransient<TService, TImplementation>(
         this IServiceProviderBuilder builder)
     {
