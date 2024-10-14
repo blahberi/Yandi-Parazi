@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreationStrategies\ServiceInstantiator.cs" />
     <Compile Include="Extensions\ServiceCollectionExtenions.cs" />
     <Compile Include="Extensions\ServiceProviderExtensions.cs" />
     <Compile Include="IScope.cs" />
@@ -53,7 +54,7 @@
     <Compile Include="CreationStrategies\ICreationStrategy.cs" />
     <Compile Include="IServiceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CreationStrategies\ServiceInstantiator.cs" />
+    <Compile Include="CreationStrategies\ServiceFactory.cs" />
     <Compile Include="CreationStrategies\TransientCreator.cs" />
     <Compile Include="IServiceProviderBuilder.cs" />
     <Compile Include="CreationStrategies\ScopedCreation.cs" />

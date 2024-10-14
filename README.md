@@ -7,19 +7,19 @@ A **Service Implementation** refers to a class that implements some interface, w
 
 ```csharp
 // Service Type
-internal interface IFoo
+interface IFoo
 {
     void FooMethod();
 }
 
 // Another service type
-internal interface IBar
+interface IBar
 {
     int BarMethod();
 }
 
 // Service Implementation for type IFoo
-internal class Foo : IFoo
+class Foo : IFoo
 {
     private readonly IBar bar;
     public Foo(IBar bar) // Depends on service with type IBar
@@ -149,3 +149,143 @@ using (IScope outerScope = serviceProvider.CreateScope())
 }
 ```
 
+## Service Factory Methods
+**Service Factory Methods** are methods that create a new instance of a service. They are called whenever we request a new instance and the creation strategy instantiates a new instance. The default service factory method simply creates a new instance of the service and resolves its dependencies. 
+
+We can define custom factory methods, which can be useful when we need to perform some custom logic when creating a service instance. Custom factory methods are defined when registering a service. Custom factories are defined as delegates that take an `IServiceProvider` as an argument and return an instance of the service.
+
+```csharp
+IServiceProvider serviceProvider = new ServiceProviderBuilder()
+    .RegisterSingleton<IFoo, Foo>()
+    .RegisterTransient<IBar, Bar>(serviceProvider => {
+        // Custom factory method
+        return new Bar();
+    }) 
+    .RegisterScoped<IBaz, Baz>()
+    .Build();
+```
+
+We can also use the `IServiceProvider` to resolve dependencies when creating a service instance.
+```csharp
+IServiceProvider serviceProvider = new ServiceProviderBuilder()
+    .RegisterSingleton<IFoo, Foo>()
+    .RegisterTransient<IBar, Bar>(serviceProvider => {
+        // Custom factory method
+        IFoo foo = serviceProvider.GetService<IFoo>();
+        return new Bar(foo);
+    }) 
+    .RegisterScoped<IBaz, Baz>()
+    .Build();
+```
+
+## Custom Creation Strategies
+We can define custom creation strategies by implementing the `ICreationStrategy` interface. Custom creation strategies can be useful when we need to perform some custom logic when creating a service instance. As an example, we will implement the `Transient` and `Singleton` creation strategies.
+
+### Transient Creation Strategy Implementation
+```csharp
+class CustomTransientCreation: ICreationStrategy
+{
+    private readonly ServiceFactory serviceFactory;
+
+    public TransientCreation(ServiceFactory serviceFactory) 
+    {
+        this.serviceFactory = serviceFactory;
+    }
+
+    IServiceProvider serviceProvider
+    public object GetInstance(IServiceProvider serviceProvider)
+    {
+        // Custom logic to create a service instance
+        return this.serviceFactory(serviceProvider);
+    }
+}
+```
+It is good practice to decouple the instantitation logic from the creation strategy by requiring a `ServiceFactory` delegate in the constructor, which allows for custom service factory methods.
+
+Now we can register services using our custom creation strategy.
+```csharp
+IServiceProvider serviceProvider = new ServiceProviderBuilder()
+    .RegisterService<IBar, Bar>(new CustomTransientCreation((serviceProvider) => {
+        // Custom factory method
+        return new Bar();
+    }))
+    .Build();
+```
+
+### Singleton Creation Strategy Implementation
+```csharp
+class CustomSingletonCreation: ICreationStrategy
+{
+    private readonly ServiceFactory serviceFactory;
+    private object instance;
+    public SingletonCreation(ServiceFactory serviceFactory) 
+    {
+        this.serviceFactory = serviceFactory;
+    }
+
+    IServiceProvider serviceProvider
+    public object GetInstance(IServiceProvider serviceProvider)
+    {
+        if (this.instance == null)
+        {
+            this.instance = this.serviceFactory(serviceProvider);
+        }
+        return this.instance;
+    }
+}
+
+// Register service with custom Singleton creation strategy
+IServiceProvider serviceProvider = new ServiceProviderBuilder()
+    .RegisterService<IBar, Bar>(new CustomSingletonCreation((serviceProvider) => {
+        // Custom factory method
+        return new Bar();
+    }))
+    .Build();
+```
+
+### Extending the Builder
+Notice that currently, registering services with our custom creation strategies is a bit verbose, unlike the built-in creation strategies. We can extend the `ServiceProviderBuilder` to provide a more fluent API for registering services with custom creation strategies.
+
+```csharp
+public static class CustomServiceProvideBuilderExtensions
+{
+    public static ServiceProviderBuilder RegisterCustomTransient<TService, TImplementation>(
+        this ServiceProviderBuilder builder, ServiceFactory serviceFactory)
+    {
+        return builder.RegisterService<TService, TImplementation>(new CustomTransientCreation(serviceFactory));
+    }
+
+    public static ServiceProviderBuilder RegisterCustomSingleton<TService, TImplementation>(
+        this ServiceProviderBuilder builder, ServiceFactory serviceFactory)
+    {
+        return builder.RegisterService<TService, TImplementation>(new CustomSingletonCreation(serviceFactory));
+    }
+
+    // Use the default service factory method
+    public static ServiceProviderBuilder RegisterCustomTransient<TService, TImplementation>(
+        this ServiceProviderBuilder builder)
+    {
+        return builder.RegisterService<TService, TImplementation>(new CustomTransientCreation(
+            DefaultServiceFactory.GetServiceFactory<TImplementation>()));
+        ));
+    }
+
+    public static ServiceProviderBuilder RegisterCustomSingleton<TService, TImplementation>(
+        this ServiceProviderBuilder builder)
+    {
+        return builder.RegisterService<TService, TImplementation>(new CustomSingletonCreation(
+            DefaultServiceFactory.GetServiceFactory<TImplementation>()));
+    }
+}
+```
+Now the service registration process is more fluent and streamlined.
+```csharp
+IServiceProvider serviceProvider = new ServiceProviderBuilder()
+    .RegisterCustomSingleton<IFoo, Foo>() // Default factory method
+    .RegisterCustomTransient<IBar, Bar>((serviceProvider) => {
+        // Custom factory method
+        IFoo foo = serviceProvider.GetService<IFoo>();
+        return new Bar(foo);
+    })
+    .Build();
+```

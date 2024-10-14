@@ -8,7 +8,7 @@ namespace Cornflakes.Extensions
             where TImplementation : TService
         {
             collection.AddService<TService, TImplementation>(new TransientCreator(
-                    (IServiceProvider servicePorvider) => ServiceInstantiator.CreateInstance(typeof(TImplementation), servicePorvider)
+                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return collection;
         }
@@ -23,7 +23,7 @@ namespace Cornflakes.Extensions
             where TImplementation : TService
         {
             collection.AddService<TService, TImplementation>(new SingletonCreation(
-                    (IServiceProvider serviceProvider) => ServiceInstantiator.CreateInstance(typeof(TImplementation), serviceProvider)
+                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return collection;
         }
@@ -38,7 +38,7 @@ namespace Cornflakes.Extensions
             where TImplementation : TService
         {
             collection.AddService<TService, TImplementation>(new ScopedCreation(
-                    (IServiceProvider serviceProvider) => ServiceInstantiator.CreateInstance(typeof(TImplementation), serviceProvider)
+                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return collection;
         }
