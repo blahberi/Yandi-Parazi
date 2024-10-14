@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Cornflakes
 {
@@ -11,17 +10,12 @@ namespace Cornflakes
         public ServiceProvider() 
         {
             services = new Dictionary<Type, ServiceDescriptor>();
-            this.Scope = new Scope(this);
         }
 
         public ServiceProvider(IDictionary<Type, ServiceDescriptor> services)
         {
             this.services = services;
-            this.Scope = new Scope(this);
         }
-
-        public IScope Scope { get; }
-
         public void RegisterService(ServiceDescriptor descriptor)
         {
             this.services[descriptor.ServiceType] = descriptor;
@@ -33,7 +27,7 @@ namespace Cornflakes
             return this.services[serviceType].CreationStrategy.GetInstance(implementationType, this);
         }
 
-        public IScope CreateChildScope()
+        public IScope CreateScope()
         {
             return new Scope(CreateCopy());
         }
@@ -42,6 +36,10 @@ namespace Cornflakes
         private IServiceProvider CreateCopy()
         {
             return new ServiceProvider(services);
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

@@ -2,11 +2,10 @@
 
 namespace Cornflakes
 {
-    public interface IServiceProvider
+    public interface IServiceProvider : IDisposable
     {
-        IScope Scope { get; }
         object GetService(Type serviceType);
-        IScope CreateChildScope();
+        IScope CreateScope();
 
     }
 }
