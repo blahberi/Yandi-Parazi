@@ -93,7 +93,7 @@ Notice how the framework automatically resolves the dependencies of the service 
 Cornflakes provides a **Scope** system which allows for more granular control over the lifetime of instances of a service. Within a **Scope**, Scoped services (services that use the Scoped creation strategy) are instantiated once. Each scope has its own single instance of the Scoped service.
 
 ### Using Scopes
-We can create a scope using the services provider's `CreateScope()` method.
+We can create a scope using the service provider's `CreateScope()` method.
 
 In the following example, assume that the service with type `IBaz` is Scoped.
 ```csharp
