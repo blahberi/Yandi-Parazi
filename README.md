@@ -249,29 +249,29 @@ Notice that currently, registering services with our custom creation strategies 
 ```csharp
 public static class CustomServiceProvideBuilderExtensions
 {
-    public static ServiceProviderBuilder RegisterCustomTransient<TService, TImplementation>(
-        this ServiceProviderBuilder builder, ServiceFactory serviceFactory)
+    public static IServiceProviderBuilder RegisterCustomTransient<TService, TImplementation>(
+        this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
     {
         return builder.RegisterService<TService, TImplementation>(new CustomTransientCreation(serviceFactory));
     }
 
-    public static ServiceProviderBuilder RegisterCustomSingleton<TService, TImplementation>(
-        this ServiceProviderBuilder builder, ServiceFactory serviceFactory)
+    public static IServiceProviderBuilder RegisterCustomSingleton<TService, TImplementation>(
+        this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
     {
         return builder.RegisterService<TService, TImplementation>(new CustomSingletonCreation(serviceFactory));
     }
 
     // Use the default service factory method
-    public static ServiceProviderBuilder RegisterCustomTransient<TService, TImplementation>(
-        this ServiceProviderBuilder builder)
+    public static IServiceProviderBuilder RegisterCustomTransient<TService, TImplementation>(
+        this IServiceProviderBuilder builder)
     {
         return builder.RegisterService<TService, TImplementation>(new CustomTransientCreation(
             DefaultServiceFactory.GetServiceFactory<TImplementation>()));
         ));
     }
 
-    public static ServiceProviderBuilder RegisterCustomSingleton<TService, TImplementation>(
-        this ServiceProviderBuilder builder)
+    public static IServiceProviderBuilder RegisterCustomSingleton<TService, TImplementation>(
+        this IServiceProviderBuilder builder)
     {
         return builder.RegisterService<TService, TImplementation>(new CustomSingletonCreation(
             DefaultServiceFactory.GetServiceFactory<TImplementation>()));
