@@ -1,17 +1,11 @@
 ﻿using System;
 
-namespace ZeTaim
+namespace Cornflakes
 {
     public interface IServiceProviderBuilder
     {
-        IServiceProviderBuilder RegisterService<TService, TImplementation>() where TImplementation : TService;
-
+        IServiceProviderBuilder RegisterService<TService, TImplementation>(ICreationStrategy creationStrategy) where TImplementation : TService;
         IServiceProviderBuilder RegisterServices(IServiceCollection services);
-
-        IServiceProviderBuilder RegisterServiceCreator<TAttribute, TCreator>() 
-            where TAttribute : Attribute 
-            where TCreator : ICreationStrategy;
-
         IServiceProvider Build();
     }
 }

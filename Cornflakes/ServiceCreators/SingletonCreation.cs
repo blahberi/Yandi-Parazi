@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ZeTaim
+namespace Cornflakes
 {
     internal class SingletonCreation : BaseCreationStrategy
     {

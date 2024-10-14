@@ -1,4 +1,4 @@
-﻿namespace ZeTaim
+﻿namespace Cornflakes
 {
     public static class ServiceProviderExtensions
     {

@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bar.cs" />
+    <Compile Include="Baz.cs" />
     <Compile Include="IBar.cs" />
+    <Compile Include="IBaz.cs" />
     <Compile Include="IFoo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

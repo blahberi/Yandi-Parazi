@@ -1,26 +1,18 @@
 ﻿using System;
 
-namespace ZeTaim
+namespace Cornflakes
 {
     public class ServiceProviderBuilder : IServiceProviderBuilder
     {
-        private readonly ServiceCreationResolver serviceCreationResolver;
-        private readonly ServiceProvider serviceProvider;
+        private readonly ServiceProvider serviceProvider = new ServiceProvider();
 
-        public ServiceProviderBuilder()
-        {
-            this.serviceCreationResolver = new ServiceCreationResolver();
-            this.serviceProvider = new ServiceProvider(serviceCreationResolver);
-
-            this.RegisterServiceCreator<PrototypeAttribute, PrototypeCreation>();
-            this.RegisterServiceCreator<SingletonAttribute, SingletonCreation>();
-        }
-
-        public IServiceProviderBuilder RegisterService<TService, TImplementation>() where TImplementation : TService
+        public IServiceProviderBuilder RegisterService<TService, TImplementation>(ICreationStrategy creationStrategy)
+            where TImplementation : TService
         {
             this.serviceProvider.RegisterService(new ServiceDescriptor(
                 typeof(TService),
-                typeof(TImplementation)
+                typeof(TImplementation),
+                creationStrategy
             ));
             return this;
         }
@@ -31,14 +23,6 @@ namespace ZeTaim
             {
                 this.serviceProvider.RegisterService(service);
             }
-            return this;
-        }
-
-        public IServiceProviderBuilder RegisterServiceCreator<TAttribute, TCreator>()
-            where TAttribute : Attribute 
-            where TCreator : ICreationStrategy
-        {
-            this.serviceCreationResolver.RegisterServiceCreator<TAttribute, TCreator>();
             return this;
         }
 

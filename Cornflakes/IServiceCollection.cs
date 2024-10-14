@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace ZeTaim
+namespace Cornflakes
 {
     public interface IServiceCollection : IList<ServiceDescriptor>
     {
-        void AddService<TService, TImplementation>() where TImplementation : TService;
+        void AddService<TService, TImplementation>(ICreationStrategy creationStrategy) where TImplementation : TService;
     }
 }

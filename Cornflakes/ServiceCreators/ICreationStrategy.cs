@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ZeTaim
+namespace Cornflakes
 {
     public interface ICreationStrategy
     {

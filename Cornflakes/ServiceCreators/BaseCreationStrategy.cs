@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace ZeTaim
+namespace Cornflakes
 {
     public abstract class BaseCreationStrategy : ICreationStrategy
     {

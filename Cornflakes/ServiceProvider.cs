@@ -1,30 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
-namespace ZeTaim
+namespace Cornflakes
 {
     internal class ServiceProvider : IServiceProvider
     {
-        private readonly IServiceCreationResolver creationResolver;
-        private readonly Dictionary<Type, ServiceDescriptor> descriptors = new Dictionary<Type, ServiceDescriptor>();
-        private readonly Dictionary<Type, ICreationStrategy> creators = new Dictionary<Type, ICreationStrategy>();
+        private readonly IDictionary<Type, ServiceDescriptor> services;
 
-        public ServiceProvider(IServiceCreationResolver creationResolver)
+        public ServiceProvider() 
         {
-            this.creationResolver = creationResolver;
+            services = new Dictionary<Type, ServiceDescriptor>();
+            this.Scope = new Scope(this);
         }
+
+        public ServiceProvider(IDictionary<Type, ServiceDescriptor> services)
+        {
+            this.services = services;
+            this.Scope = new Scope(this);
+        }
+
+        public IScope Scope { get; }
 
         public void RegisterService(ServiceDescriptor descriptor)
         {
-            this.descriptors[descriptor.ServiceType] = descriptor;
-            this.creators[descriptor.ServiceType] = this.creationResolver.GetServiceCreator(descriptor.ServiceImplementation);
-
+            this.services[descriptor.ServiceType] = descriptor;
         }
 
         public object GetService(Type serviceType)
         {
-            Type implementationType = this.descriptors[serviceType].ServiceImplementation;
-            return this.creators[serviceType].GetInstance(implementationType, this);
+            Type implementationType = this.services[serviceType].ServiceImplementation;
+            return this.services[serviceType].CreationStrategy.GetInstance(implementationType, this);
+        }
+
+        public IScope CreateChildScope()
+        {
+            return new Scope(CreateCopy());
+        }
+
+
+        private IServiceProvider CreateCopy()
+        {
+            return new ServiceProvider(services);
         }
     }
 }

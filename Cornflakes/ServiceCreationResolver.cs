@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ZeTaim
+namespace Cornflakes
 {
-    internal class ServiceCreationResolver : IServiceCreationResolver
+    internal class ServiceCreationResolver
     {
         Dictionary<Type, Type> creators = new Dictionary<Type, Type>();
 
@@ -23,7 +23,7 @@ namespace ZeTaim
 
             if (attribute == null)
             {
-                return new PrototypeCreation();
+                return new TransientCreator();
             }
 
             return (ICreationStrategy)Activator.CreateInstance(this.creators[attribute.GetType()]);

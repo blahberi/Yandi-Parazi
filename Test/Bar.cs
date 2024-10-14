@@ -1,19 +1,20 @@
 ﻿using System;
-using ZeTaim;
 
 namespace Test
 {
-    [Prototype]
     internal class Bar : IBar
     {
-        public Bar() 
+        IBaz baz;
+        public Bar(IBaz baz) 
         {
-            Console.WriteLine("Created a bar instance");
+            this.baz = baz;
+            Console.WriteLine($"Bar has been initialized {this.GetHashCode()}");
         }
 
         public int Method(int x)
         {
-            Console.WriteLine($"The Bar method was called from {GetHashCode()}");
+            Console.WriteLine($"The Bar method was called: {GetHashCode()}");
+            Console.WriteLine(this.baz.Method());
             return x * 2;
         }
     }

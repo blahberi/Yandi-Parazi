@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ZeTaim
+namespace Cornflakes
 {
-    internal class PrototypeCreation : BaseCreationStrategy
+    internal class TransientCreator : BaseCreationStrategy
     {
         public override object GetInstance(Type implementationType, IServiceProvider serviceProvider)
         {

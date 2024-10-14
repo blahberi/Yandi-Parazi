@@ -1,4 +1,6 @@
-﻿using ZeTaim;
+﻿using Cornflakes;
+using System;
+using IServiceProvider = Cornflakes.IServiceProvider;
 
 namespace Test
 {
@@ -7,17 +9,10 @@ namespace Test
         static void Main(string[] args)
         {
             IServiceProvider serviceProvider = new ServiceProviderBuilder()
-                .RegisterService<IFoo, Foo>()
-                .RegisterService<IBar, Bar>()
+                .RegisterSingleton<IFoo, Foo>()
+                .RegisterTransient<IBar, Bar>()
+                .RegisterScoped<IBaz, Baz>()
                 .Build();
-
-            IFoo foo1 = serviceProvider.GetService<IFoo>();
-            IFoo foo2 = serviceProvider.GetService<IFoo>();
-            foo1.Method();
-            foo2.Method();
-
-            IBar bar = serviceProvider.GetService<IBar>();
-            bar.Method(7);
         }
     }
 }

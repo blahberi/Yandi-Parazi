@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
-namespace ZeTaim
+namespace Cornflakes
 {
     public class ServiceCollection : IServiceCollection
     {
@@ -22,11 +21,12 @@ namespace ZeTaim
 
         public List<ServiceDescriptor> Services { get; } = new List<ServiceDescriptor>();
 
-        public void AddService<TService, TImplementation>() where TImplementation : TService
+        public void AddService<TService, TImplementation>(ICreationStrategy creationStrategy) where TImplementation : TService
         {
             this.Add(new ServiceDescriptor(
                 typeof(TService), 
-                typeof(TImplementation)
+                typeof(TImplementation),
+                creationStrategy
             ));
         }
 
