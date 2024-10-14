@@ -150,13 +150,13 @@ using (IScope outerScope = serviceProvider.CreateScope())
 ```
 
 ## Service Factory Methods
-**Service Factory Methods** are methods that create a new instance of a service. They are called whenever we request a service and the creation strategy creates a new instance. The default service factory method simply creates a new instance of the service and resolves its dependencies. 
+**Service Factory Methods** are methods that create a new instance of a service. They are called whenever we request a service and the creation strategy creates a new instance. The default service factory method creates a new instance of the service and resolves its dependencies. 
 
 We can define custom factory methods, which can be useful when we need to perform some custom logic when creating a service instance. Custom factory methods are defined when registering a service, and they are defined as delegates that take an `IServiceProvider` as an argument and return an instance of the service.
 
 ```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    .RegisterSingleton<IFoo, Foo>()
+    .RegisterSingleton<IFoo, Foo>() // Default factory method
     .RegisterTransient<IBar, Bar>(serviceProvider => {
         // Custom factory method
         return new Bar();
@@ -165,14 +165,14 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .Build();
 ```
 
-We can also use the `IServiceProvider` to resolve dependencies when creating a service instance.
+If a service depends on another service and we are using a custom factory method, we have to resolve the dependencies ourselves within the factory method.
 ```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    .RegisterSingleton<IFoo, Foo>()
+    .RegisterSingleton<IFoo, Foo>() // Default factory method
     .RegisterTransient<IBar, Bar>(serviceProvider => {
         // Custom factory method
         IFoo foo = serviceProvider.GetService<IFoo>();
-        return new Bar(foo);
+        return new Bar(foo); // Resolve the dependency (Bar depends on IFoo)
     }) 
     .RegisterScoped<IBaz, Baz>()
     .Build();
