@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Linq;
 
-namespace Cornflakes
+namespace Cornflakes.CreationStrategies
 {
-    public abstract class BaseCreationStrategy : ICreationStrategy
+    internal static class ServiceInstantiator
     {
-        public abstract object GetInstance(Type implementationType, IServiceProvider serviceProvider);
-
-        protected object CreateInstance(Type implementationType, IServiceProvider serviceProvider)
+        public static object CreateInstance(Type implementationType, IServiceProvider serviceProvider)
         {
             object[] constructorParameters = implementationType.GetConstructors().First()
                 .GetParameters()

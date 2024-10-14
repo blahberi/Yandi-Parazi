@@ -1,6 +1,4 @@
 ﻿using Cornflakes;
-using System;
-using IServiceProvider = Cornflakes.IServiceProvider;
 
 namespace Test
 {

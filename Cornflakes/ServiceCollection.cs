@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cornflakes.CreationStrategies;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,13 +22,15 @@ namespace Cornflakes
 
         public List<ServiceDescriptor> Services { get; } = new List<ServiceDescriptor>();
 
-        public void AddService<TService, TImplementation>(ICreationStrategy creationStrategy) where TImplementation : TService
+        public IServiceCollection AddService<TService, TImplementation>(ICreationStrategy creationStrategy) where TImplementation : TService
         {
             this.Add(new ServiceDescriptor(
                 typeof(TService), 
                 typeof(TImplementation),
                 creationStrategy
             ));
+
+            return this;
         }
 
         public int Count => Services.Count;

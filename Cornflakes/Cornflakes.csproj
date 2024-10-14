@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\ServiceCollectionExtenions.cs" />
+    <Compile Include="Extensions\ServiceProviderExtensions.cs" />
     <Compile Include="IScope.cs" />
     <Compile Include="IServiceCollection.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -48,19 +50,18 @@
     </Compile>
     <Compile Include="Scope.cs" />
     <Compile Include="ServiceCollection.cs" />
-    <Compile Include="ServiceCreators\BaseCreationStrategy.cs" />
-    <Compile Include="ServiceCreators\ICreationStrategy.cs" />
+    <Compile Include="CreationStrategies\ICreationStrategy.cs" />
     <Compile Include="IServiceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceCreators\TransientCreator.cs" />
+    <Compile Include="CreationStrategies\ServiceInstantiator.cs" />
+    <Compile Include="CreationStrategies\TransientCreator.cs" />
     <Compile Include="IServiceProviderBuilder.cs" />
-    <Compile Include="ServiceCreators\ScopedCreation.cs" />
+    <Compile Include="CreationStrategies\ScopedCreation.cs" />
     <Compile Include="ServiceDescriptor.cs" />
     <Compile Include="ServiceProvider.cs" />
     <Compile Include="ServiceProviderBuilder.cs" />
-    <Compile Include="ServiceCreators\SingletonCreation.cs" />
+    <Compile Include="CreationStrategies\SingletonCreation.cs" />
     <Compile Include="Extensions\ServiceProviderBuilderExtensions.cs" />
-    <Compile Include="ServiceProviderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Settings.settings">

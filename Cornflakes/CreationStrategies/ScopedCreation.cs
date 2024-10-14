@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Cornflakes
+namespace Cornflakes.CreationStrategies
 {
-    internal class ScopedCreation : BaseCreationStrategy
+    internal class ScopedCreation : ICreationStrategy
     {
         Dictionary<IServiceProvider, object> instances;
-        public override object GetInstance(Type implementationType, IServiceProvider serviceProvider)
+
+        private readonly ServiceFactory serviceFactory;
+
+        public ScopedCreation(ServiceFactory serviceFactory)
+        {
+            this.serviceFactory = serviceFactory;
+        }
+
+        public object GetInstance(IServiceProvider serviceProvider)
         {
             if (instances == null)
             {
@@ -18,7 +26,7 @@ namespace Cornflakes
                 return instances[serviceProvider];
             }
 
-            object instance = CreateInstance(implementationType, serviceProvider);
+            object instance = serviceFactory(serviceProvider);
             instances.Add(serviceProvider, instance);
             return instance;
         }
