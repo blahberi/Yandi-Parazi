@@ -150,9 +150,9 @@ using (IScope outerScope = serviceProvider.CreateScope())
 ```
 
 ## Service Factory Methods
-**Service Factory Methods** are methods that create a new instance of a service. They are called whenever we request a new instance and the creation strategy instantiates a new instance. The default service factory method simply creates a new instance of the service and resolves its dependencies. 
+**Service Factory Methods** are methods that create a new instance of a service. They are called whenever we request a service and the creation strategy creates a new instance. The default service factory method simply creates a new instance of the service and resolves its dependencies. 
 
-We can define custom factory methods, which can be useful when we need to perform some custom logic when creating a service instance. Custom factory methods are defined when registering a service. Custom factories are defined as delegates that take an `IServiceProvider` as an argument and return an instance of the service.
+We can define custom factory methods, which can be useful when we need to perform some custom logic when creating a service instance. Custom factory methods are defined when registering a service, and they are defined as delegates that take an `IServiceProvider` as an argument and return an instance of the service.
 
 ```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
@@ -179,7 +179,7 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
 ```
 
 ## Custom Creation Strategies
-We can define custom creation strategies by implementing the `ICreationStrategy` interface. Custom creation strategies can be useful when we need to perform some custom logic when creating a service instance. As an example, we will implement the `Transient` and `Singleton` creation strategies.
+We can define custom creation strategies by implementing the `ICreationStrategy` interface. Custom creation strategies can be useful when we need to perform some custom logic for handling the lifetime of service instances. As an example, we will implement the `Transient` and `Singleton` creation strategies.
 
 ### Transient Creation Strategy Implementation
 ```csharp
@@ -235,8 +235,9 @@ class CustomSingletonCreation: ICreationStrategy
         return this.instance;
     }
 }
-
-// Register service with custom Singleton creation strategy
+```
+Then service registation is performed as follows:
+```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .RegisterService<IFoo, Foo>(new CustomSingletonCreation(
         DefaultServiceFactory.GetServiceFactory<Foo>())) // Default factory method
@@ -283,7 +284,7 @@ public static class CustomServiceProvideBuilderExtensions
     }
 }
 ```
-Now the service registration process is more fluent and streamlined.
+Now the service registration process is much more fluent and streamlined.
 ```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .RegisterCustomSingleton<IFoo, Foo>() // Default factory method
