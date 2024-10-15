@@ -1,4 +1,4 @@
-﻿using Cornflakes.CreationStrategies;
+﻿using Cornflakes.LifetimeStrategies;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace Cornflakes
 
         public List<ServiceDescriptor> Services { get; } = new List<ServiceDescriptor>();
 
-        public IServiceCollection AddService<TService, TImplementation>(ICreationStrategy creationStrategy) where TImplementation : TService
+        public IServiceCollection AddService<TService, TImplementation>(ILfetimeStrategy creationStrategy) where TImplementation : TService
         {
             this.Add(new ServiceDescriptor(
                 typeof(TService), 

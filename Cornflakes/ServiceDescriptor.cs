@@ -1,19 +1,19 @@
-﻿using Cornflakes.CreationStrategies;
+﻿using Cornflakes.LifetimeStrategies;
 using System;
 
 namespace Cornflakes
 {
     public class ServiceDescriptor
     {
-        public ServiceDescriptor(Type serviceType, Type serviceImplementation, ICreationStrategy creationStrategy)
+        public ServiceDescriptor(Type serviceType, Type serviceImplementation, ILfetimeStrategy lifetimeStrategy)
         {
             this.ServiceType = serviceType;
             this.ServiceImplementation = serviceImplementation;
-            this.CreationStrategy = creationStrategy;
+            this.LifetimeStrategy = lifetimeStrategy;
         }
 
         public Type ServiceType { get; set; }
         public Type ServiceImplementation { get; }
-        public ICreationStrategy CreationStrategy { get; set; }
+        public ILfetimeStrategy LifetimeStrategy { get; set; }
     }
 }

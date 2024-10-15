@@ -1,4 +1,4 @@
-﻿using Cornflakes.CreationStrategies;
+﻿using Cornflakes.LifetimeStrategies;
 using System;
 
 namespace Cornflakes
@@ -7,7 +7,7 @@ namespace Cornflakes
     {
         private readonly ServiceProvider serviceProvider = new ServiceProvider();
 
-        public IServiceProviderBuilder RegisterService<TService, TImplementation>(ICreationStrategy creationStrategy)
+        public IServiceProviderBuilder RegisterService<TService, TImplementation>(ILfetimeStrategy creationStrategy)
             where TImplementation : TService
         {
             this.serviceProvider.RegisterService(new ServiceDescriptor(

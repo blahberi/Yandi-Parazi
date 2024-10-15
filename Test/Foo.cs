@@ -1,5 +1,4 @@
 ﻿using System;
-using Cornflakes;
 namespace Test
 {
     internal class Foo : IFoo

@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace Cornflakes.CreationStrategies
+﻿namespace Cornflakes.LifetimeStrategies
 {
-    internal class SingletonCreation : ICreationStrategy
+    internal class SingletonLifetime : ILfetimeStrategy
     {
         private object instance;
         private readonly ServiceFactory serviceFactory;
 
-        public SingletonCreation(ServiceFactory serviceFactory)
+        public SingletonLifetime(ServiceFactory serviceFactory)
         {
             this.serviceFactory = serviceFactory;
         }

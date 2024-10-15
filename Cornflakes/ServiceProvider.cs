@@ -24,7 +24,7 @@ namespace Cornflakes
         public object GetService(Type serviceType)
         {
             Type implementationType = this.services[serviceType].ServiceImplementation;
-            return this.services[serviceType].CreationStrategy.GetInstance(this);
+            return this.services[serviceType].LifetimeStrategy.GetInstance(this);
         }
 
         public IScope CreateScope()

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Cornflakes.CreationStrategies
+namespace Cornflakes.LifetimeStrategies
 {
-    internal class ScopedCreation : ICreationStrategy
+    internal class ScopedLifetime : ILfetimeStrategy
     {
         Dictionary<IServiceProvider, object> instances;
 
         private readonly ServiceFactory serviceFactory;
 
-        public ScopedCreation(ServiceFactory serviceFactory)
+        public ScopedLifetime(ServiceFactory serviceFactory)
         {
             this.serviceFactory = serviceFactory;
         }

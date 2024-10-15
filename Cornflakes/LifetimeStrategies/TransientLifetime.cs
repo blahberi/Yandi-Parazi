@@ -1,9 +1,9 @@
-﻿namespace Cornflakes.CreationStrategies
+﻿namespace Cornflakes.LifetimeStrategies
 {
-    internal class TransientCreator : ICreationStrategy 
+    internal class TransientLifetime : ILfetimeStrategy 
     {
         private readonly ServiceFactory serviceFactory;
-        public TransientCreator(ServiceFactory serviceFactory) 
+        public TransientLifetime(ServiceFactory serviceFactory) 
         {
             this.serviceFactory = serviceFactory;
         }
