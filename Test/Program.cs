@@ -11,8 +11,6 @@ namespace Test
                 .RegisterTransient<IBar, Bar>()
                 .RegisterScoped<IBaz, Baz>()
                 .Build();
-
-            IFoo foo = serviceProvider.GetService<IFoo>();
         }
     }
 }
