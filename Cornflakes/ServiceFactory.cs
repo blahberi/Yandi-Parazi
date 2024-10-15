@@ -19,7 +19,7 @@ namespace Cornflakes.LifetimeStrategies
             ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider));
 
             ConstructorInfo constructor = implementationType.GetConstructors().First();
-            IEnumerable<UnaryExpression> arguments = constructor.GetParameters()
+            IEnumerable<Expression> arguments = constructor.GetParameters()
                 .Select(p => Expression.Convert(
                     Expression.Call(
                         serviceProviderParameter,
