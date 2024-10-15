@@ -13,14 +13,6 @@ namespace Cornflakes.LifetimeStrategies
         {
             return GenerateFactory(typeof(TImplementation));
         }
-        private static object CreateInstance(Type implementationType, IServiceProvider serviceProvider)
-        {
-            object[] constructorParameters = implementationType.GetConstructors().First()
-                .GetParameters()
-                .Select(p => serviceProvider.GetService(p.ParameterType))
-                .ToArray();
-            return Activator.CreateInstance(implementationType, constructorParameters);
-        }
 
         private static ServiceFactory GenerateFactory(Type implementationType)
         {
