@@ -1,5 +1,5 @@
 # Cornflakes
-Cornflakes is a lightweight, *kinda (not really)* blazingly fast Dependency Injection framework for .NET written in C#.
+Cornflakes is a lightweight, blazingly fast Dependency Injection framework for .NET written in C#.
 <br>
 # Usage
 ## Defining Services
