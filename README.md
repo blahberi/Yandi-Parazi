@@ -39,8 +39,8 @@ class Foo : IFoo
 ```
 In the example above, the service type is `IFoo`, and the implementation is `Foo`. Notice how `Foo` depends on a service with type `IBar`.
 
-## Creation Strategies
-**Creation Strategies** define how instances of a service should be created when requested. Cornflakes comes with a couple of built-in creation strategies.
+## Lifetime Strategies
+**Lifetime Strategies** define how instances of a service should be created when requested. Cornflakes comes with a couple of built-in lifetime strategies.
 
 ### Transient
 Creates a new instance of the service implementation every time it is requested.
@@ -49,7 +49,7 @@ Creates a new instance of the service implementation every time it is requested.
 Creates only a single instance of the service implementation, and returns that same single instance every time it is requested.
 
 ### Scoped
-Is similar to the Singleton creation strategy. However, instead of having a single global instance, every **Scope** (which will be discussed later) has its own unique instance.
+Is similar to the Singleton lifetime strategy. However, instead of having a single global instance, every **Scope** (which will be discussed later) has its own unique instance.
 
 We can also define custom creation startegies, more on that later.
 
@@ -63,11 +63,11 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .RegisterScoped<IBaz, Baz>()
     .Build();
 ```
-When registering a service, we specify the **Service Type**, **Service Implementation**, and **Creation Strategy**.
+When registering a service, we specify the **Service Type**, **Service Implementation**, and **lifetime Strategy**.
 
 In the example above, we registered the following services:
 
-| Service Type | Service Implementation | Creation Strategy          |
+| Service Type | Service Implementation | lifetime strategy          |
 |--------------|------------------------|----------------------------|
 | `IFoo`       | `Foo`                  | Singleton                  |
 | `IBar`       | `Bar`                  | Transient                  |
@@ -88,7 +88,7 @@ Notice how the framework automatically resolves the dependencies of the service 
 **note:** The service being requested, all of its dependencies, and all of their dependencies (and so on, recursively), need to be registered. Thus in this example, a service with type `IFoo` needs to be registered. And if the service implemenetation depends on a service with type `IBar`, then it needs to be registered as well.
 
 ## Scopes
-Cornflakes provides a **Scope** system which allows for more granular control over the lifetime of instances of a service. Within a **Scope**, Scoped services (services that use the Scoped creation strategy) are instantiated once. Each scope has its own single instance of the Scoped service.
+Cornflakes provides a **Scope** system which allows for more granular control over the lifetime of instances of a service. Within a **Scope**, Scoped services (services that use the Scoped lifetime strategy) are instantiated once. Each scope has its own single instance of the Scoped service.
 
 ### Using Scopes
 We can create a scope using the service provider's `CreateScope()` method.
@@ -148,7 +148,7 @@ using (IScope outerScope = serviceProvider.CreateScope())
 ```
 
 ## Service Factory Methods
-**Service Factory Methods** are methods that create a new instance of a service. They are called whenever we request a service and the creation strategy creates a new instance. The default service factory method creates a new instance of the service and resolves its dependencies. 
+**Service Factory Methods** are methods that create a new instance of a service. They are called whenever we request a service and the lifetime strategy creates a new instance. The default service factory method creates a new instance of the service and resolves its dependencies. 
 
 We can define custom factory methods, which can be useful when we need to perform some custom logic when creating a service instance. Custom factory methods are defined when registering a service, and they are defined as delegates that take an `IServiceProvider` as an argument and return an instance of the service.
 
@@ -176,12 +176,12 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .Build();
 ```
 
-## Custom Creation Strategies
-Custom creation strategies can be useful when we need to perform some custom logic for handling the lifetime of service instances. We can define custom creation strategies by implementing the `ICreationStrategy` interface. As an example, we will implement the `Transient` and `Singleton` creation strategies.
+## Custom Lifetime Strategies
+Custom lifetime strategies can be useful when we need to perform some custom logic for handling the lifetime of service instances. We can define custom lifetime strategies by implementing the `ILifetimeStrategy` interface. As an example, we will implement the `Transient` and `Singleton` lifetime strategies.
 
-### Transient Creation Strategy Implementation
+### Transient lifetime Strategy Implementation
 ```csharp
-class CustomTransientCreation: ICreationStrategy
+class CustomTransientCreation: ILifetimeStrategy
 {
     private readonly ServiceFactory serviceFactory;
 
@@ -190,7 +190,6 @@ class CustomTransientCreation: ICreationStrategy
         this.serviceFactory = serviceFactory;
     }
 
-    IServiceProvider serviceProvider
     public object GetInstance(IServiceProvider serviceProvider)
     {
         // Custom logic to create a service instance
@@ -198,9 +197,9 @@ class CustomTransientCreation: ICreationStrategy
     }
 }
 ```
-It is good practice to decouple the instantitation logic from the creation strategy by requiring a `ServiceFactory` delegate in the constructor, which allows for custom service factory methods.
+It is good practice to decouple the instantitation logic from the lifetime strategy by requiring a `ServiceFactory` delegate in the constructor, which allows for custom service factory methods.
 
-Now we can register services using our custom creation strategy. For the examples below, we will assume that `Bar` depends on `IFoo`.
+Now we can register services using our custom lifetime strategy. For the examples below, we will assume that `Bar` depends on `IFoo`.
 ```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .RegisterService<IFoo, Foo>(new CustomTransientCreation(
@@ -213,9 +212,9 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .Build();
 ```
 
-### Singleton Creation Strategy Implementation
+### Singleton lifetime Strategy Implementation
 ```csharp
-class CustomSingletonCreation: ICreationStrategy
+class CustomSingletonCreation: ILifetimeStrategy
 {
     private readonly ServiceFactory serviceFactory;
     private object instance;
@@ -248,7 +247,7 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
 ```
 
 ### Extending the Builder
-Notice that currently, registering services with our custom creation strategies is a bit verbose, unlike the built-in creation strategies. We can extend the `ServiceProviderBuilder` to provide a more fluent API for registering services with custom creation strategies.
+Notice that currently, registering services with our custom lifetime strategies is a bit verbose, unlike the built-in lifetime strategies. We can extend the `ServiceProviderBuilder` to provide a more fluent API for registering services with custom lifetime strategies.
 
 ```csharp
 public static class CustomServiceProvideBuilderExtensions
