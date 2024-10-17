@@ -7,7 +7,7 @@ namespace Test
     {
         public Baz()
         {
-            Console.WriteLine($"Baz has been initialized: {this.GetHashCode()}");
+            //Console.WriteLine($"Baz has been initialized: {this.GetHashCode()}");
         }
 
         public string Method()

@@ -1,24 +1,17 @@
 ﻿using Cornflakes;
-using System;
 
 namespace Test
 {
     internal class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            // Create the service provider using the builder
             Cornflakes.IServiceProvider serviceProvider = new ServiceProviderBuilder()
                 .RegisterSingleton<IFoo, Foo>()
                 .RegisterTransient<IBar, Bar>()
                 .RegisterScoped<IBaz, Baz>()
                 .Build();
-
-            using (IScope scope = serviceProvider.CreateScope())
-            {
-                scope.ServiceProvider.GetService<IBaz>();
-            }
-
-            Console.ReadLine();
         }
     }
 }

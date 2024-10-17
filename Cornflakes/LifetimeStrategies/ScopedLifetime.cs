@@ -6,8 +6,8 @@ namespace Cornflakes.LifetimeStrategies
     internal class ScopedLifetime : ILfetimeStrategy
     {
         Dictionary<IScope, object> instances;
-
         private readonly ServiceFactory serviceFactory;
+        private readonly object lockObject = new object();
 
         public ScopedLifetime(ServiceFactory serviceFactory)
         {
@@ -17,26 +17,32 @@ namespace Cornflakes.LifetimeStrategies
         public object GetInstance(IServiceProvider serviceProvider)
         {
             IScope scope = serviceProvider.Scope;
-            if (instances == null)
+            lock(this.lockObject)
             {
-                instances = new Dictionary<IScope, object>();
-            }
+                if (instances == null)
+                {
+                    instances = new Dictionary<IScope, object>();
+                }
 
-            if (instances.ContainsKey(scope))
-            {
-                return instances[scope];
-            }
+                if (instances.ContainsKey(scope))
+                {
+                    return instances[scope];
+                }
 
-            object instance = serviceFactory(serviceProvider);
-            instances.Add(scope, instance);
-            scope.Subscribe(ScopeDisposed);
-            return instance;
+                object instance = serviceFactory(serviceProvider);
+                instances.Add(scope, instance);
+                scope.Subscribe(ScopeDisposed);
+                return instance;
+            }
         }
 
         private void ScopeDisposed(IScope scope)
         {
-            this.instances.Remove(scope);
-            Console.WriteLine();
+            lock(this.lockObject)
+            {
+                if (!instances.ContainsKey(scope)) return;
+                this.instances.Remove(scope);
+            }
         }
     }
 }

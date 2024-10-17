@@ -8,13 +8,13 @@ namespace Test
         public Bar(IBaz baz) 
         {
             this.baz = baz;
-            Console.WriteLine($"Bar has been initialized {this.GetHashCode()}");
+            //Console.WriteLine($"Bar has been initialized {this.GetHashCode()}");
         }
 
         public int Method(int x)
         {
-            Console.WriteLine($"The Bar method was called: {GetHashCode()}");
-            Console.WriteLine(this.baz.Method());
+            //Console.WriteLine($"The Bar method was called: {GetHashCode()}");
+            this.baz.Method();
             return x * 2;
         }
     }

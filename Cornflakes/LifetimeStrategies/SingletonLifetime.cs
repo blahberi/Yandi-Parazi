@@ -4,6 +4,7 @@
     {
         private object instance;
         private readonly ServiceFactory serviceFactory;
+        private readonly object lockObject = new object();
 
         public SingletonLifetime(ServiceFactory serviceFactory)
         {
@@ -14,7 +15,13 @@
         {
             if (this.instance == null)
             {
-                this.instance = this.serviceFactory(serviceProvider);
+                lock (this.lockObject)
+                {
+                    if (this.instance == null)
+                    {
+                        this.instance = this.serviceFactory(serviceProvider);
+                    }
+                }
             }
             return this.instance;
         }

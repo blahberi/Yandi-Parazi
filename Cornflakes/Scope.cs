@@ -23,7 +23,6 @@ namespace Cornflakes
 
         public void Dispose()
         {
-            Console.WriteLine("Disposing scope");
             if (this.isDisposed) return;
             this.isDisposed = true;
             this.ServiceProvider.Dispose();
