@@ -1,5 +1,4 @@
 ﻿using Cornflakes.LifetimeStrategies;
-using System;
 
 namespace Cornflakes
 {
@@ -31,5 +30,6 @@ namespace Cornflakes
         {
             return this.serviceProvider;
         }
+
     }
 }

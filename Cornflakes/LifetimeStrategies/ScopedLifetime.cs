@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Cornflakes.LifetimeStrategies
 {
     internal class ScopedLifetime : ILfetimeStrategy
     {
-        Dictionary<IServiceProvider, object> instances;
+        Dictionary<IScope, object> instances;
 
         private readonly ServiceFactory serviceFactory;
 
@@ -15,19 +16,27 @@ namespace Cornflakes.LifetimeStrategies
 
         public object GetInstance(IServiceProvider serviceProvider)
         {
+            IScope scope = serviceProvider.Scope;
             if (instances == null)
             {
-                instances = new Dictionary<IServiceProvider, object>();
+                instances = new Dictionary<IScope, object>();
             }
 
-            if (instances.ContainsKey(serviceProvider))
+            if (instances.ContainsKey(scope))
             {
-                return instances[serviceProvider];
+                return instances[scope];
             }
 
             object instance = serviceFactory(serviceProvider);
-            instances.Add(serviceProvider, instance);
+            instances.Add(scope, instance);
+            scope.Subscribe(ScopeDisposed);
             return instance;
+        }
+
+        private void ScopeDisposed(IScope scope)
+        {
+            this.instances.Remove(scope);
+            Console.WriteLine();
         }
     }
 }

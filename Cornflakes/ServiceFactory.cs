@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Cornflakes.LifetimeStrategies
+namespace Cornflakes
 {
     public delegate object ServiceFactory(IServiceProvider serviceProvider);
     public static class DefaultServiceFactory
@@ -28,7 +28,7 @@ namespace Cornflakes.LifetimeStrategies
                         Expression.Constant(p.ParameterType)),
                     p.ParameterType));
 
-            NewExpression constructionExpression = Expression.New(constructor, arguments);
+            Expression constructionExpression = Expression.New(constructor, arguments);
 
             return Expression.Lambda<ServiceFactory>(constructionExpression, serviceProviderParameter).Compile();
         }

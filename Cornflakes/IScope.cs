@@ -1,7 +1,11 @@
-﻿namespace Cornflakes
+﻿using System;
+
+namespace Cornflakes
 {
-    public interface IScope
+    public delegate void ScopeDisposalHandler(IScope scope);
+    public interface IScope : IDisposable
     {
         IServiceProvider ServiceProvider { get; }
+        void Subscribe(ScopeDisposalHandler handler);
     }
 }
