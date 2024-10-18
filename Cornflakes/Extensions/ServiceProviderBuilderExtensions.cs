@@ -7,45 +7,42 @@ namespace Cornflakes
         public static IServiceProviderBuilder RegisterTransient<TService, TImplementation>(this IServiceProviderBuilder builder)
             where TImplementation : TService
         {
-            builder.RegisterService<TService, TImplementation>(new TransientLifetime(
+            builder.RegisterService<TService>(new TransientLifetime(
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return builder;
         }
-        public static IServiceProviderBuilder RegisterTransient<TService, TImplementation>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
-            where TImplementation : TService
+        public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
         {
-            builder.RegisterService<TService, TImplementation>(new TransientLifetime(serviceFactory));
+            builder.RegisterService<TService>(new TransientLifetime(serviceFactory));
             return builder;
         }
 
         public static IServiceProviderBuilder RegisterSingleton<TService, TImplementation>(this IServiceProviderBuilder builder)
             where TImplementation : TService
         {
-            builder.RegisterService<TService, TImplementation>(new SingletonLifetime(
+            builder.RegisterService<TService>(new SingletonLifetime(
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return builder;
         }
-        public static IServiceProviderBuilder RegisterSingleton<TService, TImplementation>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
-            where TImplementation : TService
+        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
         {
-            builder.RegisterService<TService, TImplementation>(new SingletonLifetime(serviceFactory));
+            builder.RegisterService<TService>(new SingletonLifetime(serviceFactory));
             return builder;
         }
 
         public static IServiceProviderBuilder RegisterScoped<TService, TImplementation>(this IServiceProviderBuilder builder)
             where TImplementation : TService
         {
-            builder.RegisterService<TService, TImplementation>(new ScopedLifetime(
+            builder.RegisterService<TService>(new ScopedLifetime(
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return builder;
         }
-        public static IServiceProviderBuilder RegisterScoped<TService, TImplementation>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
-            where TImplementation : TService
+        public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
         {
-            builder.RegisterService<TService, TImplementation>(new ScopedLifetime(serviceFactory));
+            builder.RegisterService<TService>(new ScopedLifetime(serviceFactory));
             return builder;
         }
     }

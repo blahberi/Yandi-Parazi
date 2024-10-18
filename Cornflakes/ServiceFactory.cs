@@ -16,8 +16,9 @@ namespace Cornflakes
 
         private static ServiceFactory GenerateFactory(Type implementationType)
         {
-            ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider));
-            MethodInfo GetService = typeof(IServiceProvider).GetMethod(nameof(IServiceProvider.GetService));
+            ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
+            MethodInfo GetService = typeof(IServiceProvider)
+                .GetMethod(nameof(IServiceProvider.GetService));
 
             ConstructorInfo constructor = implementationType.GetConstructors().First();
             IEnumerable<Expression> arguments = constructor.GetParameters()
@@ -25,7 +26,7 @@ namespace Cornflakes
                     Expression.Call(
                         serviceProviderParameter,
                         GetService,
-                        Expression.Constant(p.ParameterType)),
+                        Expression.Constant(p.ParameterType)), 
                     p.ParameterType));
 
             Expression constructionExpression = Expression.New(constructor, arguments);

@@ -6,12 +6,10 @@ namespace Cornflakes
     {
         private readonly ServiceProvider serviceProvider = new ServiceProvider();
 
-        public IServiceProviderBuilder RegisterService<TService, TImplementation>(ILfetimeStrategy creationStrategy)
-            where TImplementation : TService
+        public IServiceProviderBuilder RegisterService<TService>(ILfetimeStrategy creationStrategy)
         {
             this.serviceProvider.RegisterService(new ServiceDescriptor(
                 typeof(TService),
-                typeof(TImplementation),
                 creationStrategy
             ));
             return this;

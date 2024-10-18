@@ -7,45 +7,42 @@ namespace Cornflakes.Extensions
         public static IServiceCollection AddTransient<TService, TImplementation>(this IServiceCollection collection)
             where TImplementation : TService
         {
-            collection.AddService<TService, TImplementation>(new TransientLifetime(
+            collection.AddService<TService>(new TransientLifetime(
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return collection;
         }
-        public static IServiceCollection AddTransient<TService, TImplementation>(this IServiceCollection collection, ServiceFactory serviceFactory)
-            where TImplementation : TService
+        public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
         {
-            collection.AddService<TService, TImplementation>(new TransientLifetime(serviceFactory));
+            collection.AddService<TService>(new TransientLifetime(serviceFactory));
             return collection;
         }
 
         public static IServiceCollection AddSingleton<TService, TImplementation>(this IServiceCollection collection)
             where TImplementation : TService
         {
-            collection.AddService<TService, TImplementation>(new SingletonLifetime(
+            collection.AddService<TService>(new SingletonLifetime(
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return collection;
         }
-        public static IServiceCollection AddSingleton<TService, TImplementation>(this IServiceCollection collection, ServiceFactory serviceFactory)
-            where TImplementation : TService
+        public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
         {
-            collection.AddService<TService, TImplementation>(new SingletonLifetime(serviceFactory));
+            collection.AddService<TService>(new SingletonLifetime(serviceFactory));
             return collection;
         }
 
         public static IServiceCollection AddScoped<TService, TImplementation>(this IServiceCollection collection)
             where TImplementation : TService
         {
-            collection.AddService<TService, TImplementation>(new ScopedLifetime(
+            collection.AddService<TService>(new ScopedLifetime(
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
             return collection;
         }
-        public static IServiceCollection AddScoped<TService, TImplementation>(this IServiceCollection collection, ServiceFactory serviceFactory)
-            where TImplementation : TService
+        public static IServiceCollection AddScoped<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
         {
-            collection.AddService<TService, TImplementation>(new ScopedLifetime(serviceFactory));
+            collection.AddService<TService>(new ScopedLifetime(serviceFactory));
             return collection;
         }
     }

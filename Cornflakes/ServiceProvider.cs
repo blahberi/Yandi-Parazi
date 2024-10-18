@@ -21,7 +21,7 @@ namespace Cornflakes
         {
             if (this.services.ContainsKey(descriptor.ServiceType))
             {
-                throw new InvalidOperationException($"Can't register service {descriptor.ServiceImplementation} since there is already a service registered with the same type: {descriptor.ServiceType}.");
+                throw new InvalidOperationException($"Can't register service of type {descriptor.ServiceType} since there is already a service registered with the same type.");
             }
             this.services[descriptor.ServiceType] = descriptor;
         }

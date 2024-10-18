@@ -4,7 +4,7 @@ namespace Cornflakes
 {
     public interface IServiceProviderBuilder
     {
-        IServiceProviderBuilder RegisterService<TService, TImplementation>(ILfetimeStrategy creationStrategy) where TImplementation : TService;
+        IServiceProviderBuilder RegisterService<TService>(ILfetimeStrategy creationStrategy); 
         IServiceProviderBuilder RegisterServices(IServiceCollection services);
         IServiceProvider Build();
     }
