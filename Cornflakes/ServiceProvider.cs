@@ -26,7 +26,7 @@ namespace Cornflakes
 
         public object GetService(Type serviceType)
         {
-            if (this.services.TryGetValue(serviceType, out ServiceDescriptor descriptor))
+            if (this.services.TryGetValue(serviceType, out ServiceDescriptor? descriptor))
             {
                 return descriptor.LifetimeStrategy.GetInstance(this);
             }

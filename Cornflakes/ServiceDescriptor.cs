@@ -1,5 +1,4 @@
 ﻿using Cornflakes.LifetimeStrategies;
-using System;
 
 namespace Cornflakes
 {

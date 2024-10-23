@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cornflakes
+﻿namespace Cornflakes
 {
     public interface IServiceProvider : IDisposable
     {

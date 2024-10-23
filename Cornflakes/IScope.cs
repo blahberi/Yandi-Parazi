@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cornflakes
+﻿namespace Cornflakes
 {
     public delegate void ScopeDisposalHandler(IScope scope);
     public interface IScope : IDisposable

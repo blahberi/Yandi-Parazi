@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Cornflakes
@@ -17,8 +14,13 @@ namespace Cornflakes
         private static ServiceFactory GenerateFactory(Type implementationType)
         {
             ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
-            MethodInfo GetService = typeof(IServiceProvider)
+            MethodInfo? GetService = typeof(IServiceProvider)
                 .GetMethod(nameof(IServiceProvider.GetService));
+
+            if (GetService == null)
+            {
+                throw new MissingMethodException(nameof(IServiceProvider), nameof(IServiceProvider.GetService));
+            }
 
             ConstructorInfo constructor = implementationType.GetConstructors().First();
             IEnumerable<Expression> arguments = constructor.GetParameters()

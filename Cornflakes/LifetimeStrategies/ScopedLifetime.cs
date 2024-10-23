@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Cornflakes.LifetimeStrategies
+﻿namespace Cornflakes.LifetimeStrategies
 {
     internal class ScopedLifetime : ILifetimeStrategy
     {
