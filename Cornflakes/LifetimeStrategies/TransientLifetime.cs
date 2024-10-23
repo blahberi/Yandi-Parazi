@@ -1,6 +1,6 @@
 ﻿namespace Cornflakes.LifetimeStrategies
 {
-    internal class TransientLifetime : ILfetimeStrategy 
+    internal class TransientLifetime : ILifetimeStrategy 
     {
         private readonly ServiceFactory serviceFactory;
         public TransientLifetime(ServiceFactory serviceFactory) 

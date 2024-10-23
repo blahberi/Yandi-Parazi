@@ -1,4 +1,4 @@
-﻿﻿namespace Cornflakes.Extensions
+﻿﻿namespace Cornflakes
 {
     public static class ServiceProviderExtensions
     {

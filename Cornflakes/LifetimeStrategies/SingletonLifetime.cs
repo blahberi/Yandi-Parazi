@@ -1,6 +1,6 @@
 ﻿namespace Cornflakes.LifetimeStrategies
 {
-    internal class SingletonLifetime : ILfetimeStrategy
+    internal class SingletonLifetime : ILifetimeStrategy
     {
         private object instance;
         private readonly ServiceFactory serviceFactory;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Cornflakes.LifetimeStrategies
 {
-    internal class ScopedLifetime : ILfetimeStrategy
+    internal class ScopedLifetime : ILifetimeStrategy
     {
         Dictionary<IScope, object> instances;
         private readonly ServiceFactory serviceFactory;

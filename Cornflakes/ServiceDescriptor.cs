@@ -5,13 +5,13 @@ namespace Cornflakes
 {
     public class ServiceDescriptor
     {
-        public ServiceDescriptor(Type serviceType, ILfetimeStrategy lifetimeStrategy)
+        public ServiceDescriptor(Type serviceType, ILifetimeStrategy lifetimeStrategy)
         {
             this.ServiceType = serviceType;
             this.LifetimeStrategy = lifetimeStrategy;
         }
 
         public Type ServiceType { get; set; }
-        public ILfetimeStrategy LifetimeStrategy { get; set; }
+        public ILifetimeStrategy LifetimeStrategy { get; set; }
     }
 }

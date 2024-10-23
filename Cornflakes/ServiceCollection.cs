@@ -22,7 +22,7 @@ namespace Cornflakes
 
         public List<ServiceDescriptor> Services { get; } = new List<ServiceDescriptor>();
 
-        public IServiceCollection AddService<TService>(ILfetimeStrategy creationStrategy)
+        public IServiceCollection AddService<TService>(ILifetimeStrategy creationStrategy)
         {
             this.Add(new ServiceDescriptor(
                 typeof(TService), 

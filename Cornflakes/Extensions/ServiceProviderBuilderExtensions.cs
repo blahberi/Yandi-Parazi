@@ -1,6 +1,6 @@
 ﻿using Cornflakes.LifetimeStrategies;
 
-namespace Cornflakes.Extensions
+namespace Cornflakes
 {
     public static class ServiceProviderBuilderExtensions
     {

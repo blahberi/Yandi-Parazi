@@ -1,6 +1,6 @@
 ﻿namespace Cornflakes.LifetimeStrategies
 {
-    public interface ILfetimeStrategy
+    public interface ILifetimeStrategy
     {
         object GetInstance(IServiceProvider serviceProvider);
     }

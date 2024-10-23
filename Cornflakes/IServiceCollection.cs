@@ -5,6 +5,6 @@ namespace Cornflakes
 {
     public interface IServiceCollection : IList<ServiceDescriptor>
     {
-        IServiceCollection AddService<TService>(ILfetimeStrategy creationStrategy);
+        IServiceCollection AddService<TService>(ILifetimeStrategy creationStrategy);
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Cornflakes
+﻿namespace Cornflakes
 {
     internal class Scope : IScope
     {
