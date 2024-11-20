@@ -6,6 +6,11 @@ namespace Cornflakes
     {
         private readonly ServiceProvider serviceProvider = new ServiceProvider();
 
+        public ServiceProviderBuilder()
+        {
+            this.RegisterService<IServiceProvider>(new TransientLifetime(sp => sp));
+        }
+
         public IServiceProviderBuilder RegisterService<TService>(ILifetimeStrategy creationStrategy)
         {
             this.serviceProvider.RegisterService(new ServiceDescriptor(
