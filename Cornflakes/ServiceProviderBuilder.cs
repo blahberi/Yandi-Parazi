@@ -4,7 +4,7 @@ namespace Cornflakes
 {
     public class ServiceProviderBuilder : IServiceProviderBuilder
     {
-        private readonly ServiceProvider serviceProvider = new ServiceProvider();
+        private readonly ProviderOfServices serviceProvider = new ProviderOfServices();
 
         public IServiceProviderBuilder RegisterService<TService>(ILifetimeStrategy creationStrategy)
         {
@@ -24,7 +24,7 @@ namespace Cornflakes
             return this;
         }
 
-        public IServiceProvider Build()
+        public IProviderOfServices Build()
         {
             return this.serviceProvider;
         }

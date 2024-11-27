@@ -8,7 +8,7 @@
             this.serviceFactory = serviceFactory;
         }
 
-        public object GetInstance(IServiceProvider serviceProvider)
+        public object GetInstance(IProviderOfServices serviceProvider)
         {
             return this.serviceFactory(serviceProvider);
         }
