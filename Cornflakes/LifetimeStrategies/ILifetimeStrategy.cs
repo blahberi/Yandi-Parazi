@@ -2,6 +2,6 @@
 {
     public interface ILifetimeStrategy
     {
-        object GetInstance(IServiceProvider serviceProvider);
+        object GetInstance(IProviderOfServices serviceProvider);
     }
 }

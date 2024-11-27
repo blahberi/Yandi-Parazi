@@ -11,7 +11,7 @@
             this.serviceFactory = serviceFactory;
         }
 
-        public object GetInstance(IServiceProvider serviceProvider)
+        public object GetInstance(IProviderOfServices serviceProvider)
         {
             if (this.instance == null)
             {

@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Cornflakes
 {
-    public delegate object ServiceFactory(IServiceProvider serviceProvider);
+    public delegate object ServiceFactory(IProviderOfServices serviceProvider);
     public static class DefaultServiceFactory
     {
         public static ServiceFactory GetServiceFactory<TImplementation>()
@@ -13,13 +13,13 @@ namespace Cornflakes
 
         private static ServiceFactory GenerateFactory(Type implementationType)
         {
-            ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
-            MethodInfo? GetService = typeof(IServiceProvider)
-                .GetMethod(nameof(IServiceProvider.GetService));
+            ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IProviderOfServices), "serviceProvider");
+            MethodInfo? GetService = typeof(IProviderOfServices)
+                .GetMethod(nameof(IProviderOfServices.GetService));
 
             if (GetService == null)
             {
-                throw new MissingMethodException(nameof(IServiceProvider), nameof(IServiceProvider.GetService));
+                throw new MissingMethodException(nameof(IProviderOfServices), nameof(IProviderOfServices.GetService));
             }
 
             ConstructorInfo constructor = implementationType.GetConstructors().First();

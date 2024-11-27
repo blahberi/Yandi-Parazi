@@ -2,12 +2,12 @@
 
 namespace Cornflakes
 {
-    internal class ServiceProvider : IServiceProvider
+    internal class ProviderOfServices : IProviderOfServices
     {
         private readonly ConcurrentDictionary<Type, ServiceDescriptor> services;
         private bool isDisposed;
 
-        public ServiceProvider() 
+        public ProviderOfServices() 
         {
             services = new ConcurrentDictionary<Type, ServiceDescriptor>();
             this.Scope = new Scope(this);
@@ -45,12 +45,12 @@ namespace Cornflakes
             this.Scope.Dispose();
         }
 
-        private IServiceProvider CreateCopy()
+        private IProviderOfServices CreateCopy()
         {
-            return new ServiceProvider(services);
+            return new ProviderOfServices(services);
         }
 
-        private ServiceProvider(ConcurrentDictionary<Type, ServiceDescriptor> services)
+        private ProviderOfServices(ConcurrentDictionary<Type, ServiceDescriptor> services)
         {
             this.services = services;
             this.Scope = new Scope(this);

@@ -6,12 +6,12 @@
         private List<ScopeDisposalHandler> disposalHandlers = new List<ScopeDisposalHandler>();
 
 
-        public Scope(IServiceProvider serviceProvider) 
+        public Scope(IProviderOfServices serviceProvider) 
         {
             this.ServiceProvider = serviceProvider;
         }
 
-        public IServiceProvider ServiceProvider { get; }
+        public IProviderOfServices ServiceProvider { get; }
 
         public void Subscribe(ScopeDisposalHandler handler)
         {
