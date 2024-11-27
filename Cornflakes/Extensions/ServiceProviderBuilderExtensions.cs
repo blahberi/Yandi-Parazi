@@ -6,7 +6,6 @@ namespace Cornflakes
     {
         public static IServiceProviderBuilder RegisterTransient<TService, TImplementation>(this IServiceProviderBuilder builder)
             where TService : class 
-            where TService : class
             where TImplementation : TService
         {
             builder.RegisterService<TService>(new TransientLifetime(
@@ -29,11 +28,7 @@ namespace Cornflakes
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
         }
-        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
-            where TService : class
-        {
-            return builder.RegisterSingleton<TService>(sp => instance);
-        }
+
         public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, TService instance)
             where TService : class
         {
