@@ -6,6 +6,7 @@ namespace Cornflakes
     {
         public static IServiceProviderBuilder RegisterTransient<TService, TImplementation>(this IServiceProviderBuilder builder)
             where TService : class 
+            where TService : class
             where TImplementation : TService
         {
             builder.RegisterService<TService>(new TransientLifetime(
@@ -24,16 +25,14 @@ namespace Cornflakes
             where TService : class
             where TImplementation : TService
         {
-            builder.RegisterService<TService>(new SingletonLifetime(
+            return builder.RegisterService<TService>(new SingletonLifetime(
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
-            return builder;
         }
         public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
             where TService : class
         {
-            builder.RegisterService<TService>(new SingletonLifetime(serviceFactory));
-            return builder;
+            return builder.RegisterSingleton<TService>(sp => instance);
         }
         public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, TService instance)
             where TService : class
@@ -46,15 +45,14 @@ namespace Cornflakes
             where TService : class
             where TImplementation : TService
         {
-            builder.RegisterService<TService>(new ScopedLifetime(
+            return builder.RegisterService<TService>(new ScopedLifetime(
                     DefaultServiceFactory.GetServiceFactory<TImplementation>()
                 ));
-            return builder;
         }
         public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
+            where TService : class
         {
-            builder.RegisterService<TService>(new ScopedLifetime(serviceFactory));
-            return builder;
+            return builder.RegisterService<TService>(new ScopedLifetime(serviceFactory));
         }
     }
 }
