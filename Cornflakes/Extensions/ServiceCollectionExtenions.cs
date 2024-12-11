@@ -34,7 +34,7 @@ namespace Cornflakes
         public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, TService instance)
             where TService : class
         {
-            return collection.AddSingleton<TService>(sp => instance);
+            return collection.AddTransient<TService>(sp => instance);
         }
 
         public static IServiceCollection AddScoped<TService, TImplementation>(this IServiceCollection collection)
