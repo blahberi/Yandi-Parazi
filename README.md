@@ -179,7 +179,7 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
 ```
 
 ### Default Service Factory Method
-The default service factory method simply creates a new instance of the service and resolves its dependencies. Cornflakes will use the default service factory method if a custom factory method is not provided when registering a service. Cornflakes uses code generation to create the default service factory method, which provides high performance service instantiation and dependency resolution.
+The default service factory method simply creates a new instance of the service and resolves its dependencies. Cornflakes will use the default service factory method if a custom factory method is not provided when registering a service. Cornflakes uses the JIT to dynamically generate and compile the default service factory method, which provides high performance service instantiation and dependency resolution.
 For example, if we have the follwing service registration:
 ```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
