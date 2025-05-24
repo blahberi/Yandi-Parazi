@@ -1,4 +1,4 @@
-﻿using Cornflakes.LifetimeStrategies;
+﻿using Cornflakes.LifetimeManagers;
 using System.Collections;
 
 namespace Cornflakes
@@ -20,11 +20,11 @@ namespace Cornflakes
 
         public List<ServiceDescriptor> Services { get; } = new List<ServiceDescriptor>();
 
-        public IServiceCollection AddService<TService>(ILifetimeStrategy creationStrategy)
+        public IServiceCollection AddService<TService>(ILifetimeManager lifetimeManager)
         {
             this.Add(new ServiceDescriptor(
                 typeof(TService), 
-                creationStrategy
+                lifetimeManager
             ));
 
             return this;

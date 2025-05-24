@@ -15,7 +15,7 @@
 
         public void Subscribe(ScopeDisposalHandler handler)
         {
-            disposalHandlers.Add(handler);
+            this.disposalHandlers.Add(handler);
         }
 
         public void Dispose()
@@ -28,7 +28,7 @@
 
         private void InvokeDisposalEvent()
         {
-            disposalHandlers.ForEach(handler => handler(this));
+            this.disposalHandlers.ForEach(handler => handler(this));
         }
     }
 }

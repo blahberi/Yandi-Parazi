@@ -1,4 +1,4 @@
-﻿using Cornflakes.LifetimeStrategies;
+﻿using Cornflakes.LifetimeManagers;
 
 namespace Cornflakes
 {
@@ -9,15 +9,20 @@ namespace Cornflakes
             where TImplementation : TService
         {
             builder.RegisterService<TService>(new TransientLifetime(
-                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
                 ));
+            return builder;
+        }
+        public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, ServiceLoader serviceLoader)
+            where TService : class
+        {
+            builder.RegisterService<TService>(new TransientLifetime(serviceLoader));
             return builder;
         }
         public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
             where TService : class
         {
-            builder.RegisterService<TService>(new TransientLifetime(serviceFactory));
-            return builder;
+            return builder.RegisterTransient<TService>(serviceFactory.ToLoader());
         }
 
         public static IServiceProviderBuilder RegisterSingleton<TService, TImplementation>(this IServiceProviderBuilder builder)
@@ -25,10 +30,19 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return builder.RegisterService<TService>(new SingletonLifetime(
-                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
                 ));
         }
-
+        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceLoader serviceLoader)
+            where TService : class
+        {
+            return builder.RegisterService<TService>(new SingletonLifetime(serviceLoader));
+        }
+        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
+            where TService : class
+        {
+            return builder.RegisterSingleton<TService>(serviceFactory.ToLoader());
+        }
         public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, TService instance)
             where TService : class
         {
@@ -41,13 +55,20 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return builder.RegisterService<TService>(new ScopedLifetime(
-                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
                 ));
         }
-        public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
+        public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder, ServiceLoader serviceLoader)
             where TService : class
         {
-            return builder.RegisterService<TService>(new ScopedLifetime(serviceFactory));
+            return builder.RegisterService<TService>(new ScopedLifetime(serviceLoader));
+        }
+
+        public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder,
+            ServiceFactory serviceFactory)
+            where TService : class
+        {
+            return builder.RegisterScoped<TService>(serviceFactory.ToLoader());
         }
     }
 }

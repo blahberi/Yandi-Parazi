@@ -1,10 +1,10 @@
-﻿using Cornflakes.LifetimeStrategies;
+﻿using Cornflakes.LifetimeManagers;
 
 namespace Cornflakes
 {
     public interface IServiceProviderBuilder
     {
-        IServiceProviderBuilder RegisterService<TService>(ILifetimeStrategy creationStrategy); 
+        IServiceProviderBuilder RegisterService<TService>(ILifetimeManager creationStrategy); 
         IServiceProviderBuilder RegisterServices(IServiceCollection services);
         IProviderOfServices Build();
     }

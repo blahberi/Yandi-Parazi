@@ -1,4 +1,4 @@
-﻿using Cornflakes.LifetimeStrategies;
+﻿using Cornflakes.LifetimeManagers;
 
 namespace Cornflakes
 {
@@ -9,13 +9,18 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return collection.AddService<TService>(new TransientLifetime(
-                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
                 ));
+        }
+        public static IServiceCollection AddTransient<TService>(this IServiceCollection collection,
+            ServiceLoader serviceLoader)
+        {
+            return collection.AddService<TService>(new TransientLifetime(serviceLoader));
         }
         public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
             where TService : class
         {
-            return collection.AddService<TService>(new TransientLifetime(serviceFactory));
+            return collection.AddTransient<TService>(serviceFactory.ToLoader());
         }
 
         public static IServiceCollection AddSingleton<TService, TImplementation>(this IServiceCollection collection)
@@ -23,13 +28,18 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return collection.AddService<TService>(new SingletonLifetime(
-                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
                 ));
+        }
+        public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceLoader serviceLoader)
+            where TService : class
+        {
+            return collection.AddService<TService>(new SingletonLifetime(serviceLoader));
         }
         public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
             where TService : class
         {
-            return collection.AddService<TService>(new SingletonLifetime(serviceFactory));
+            return collection.AddSingleton<TService>(serviceFactory.ToLoader());
         }
         public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, TService instance)
             where TService : class
@@ -42,13 +52,20 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return collection.AddService<TService>(new ScopedLifetime(
-                    DefaultServiceFactory.GetServiceFactory<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
                 ));
         }
-        public static IServiceCollection AddScoped<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
+        public static IServiceCollection AddScoped<TService>(this IServiceCollection collection, ServiceLoader serviceLoader)
             where TService : class
         {
-            return collection.AddService<TService>(new ScopedLifetime(serviceFactory));
+            return collection.AddService<TService>(new ScopedLifetime(serviceLoader));
+        }
+
+        public static IServiceCollection AddScoped<TService>(this IServiceCollection collection,
+            ServiceFactory serviceFactory)
+            where TService : class
+        {
+            return collection.AddScoped<TService>(serviceFactory.ToLoader());
         }
     }
 }

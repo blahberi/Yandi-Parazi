@@ -1,4 +1,4 @@
-﻿using Cornflakes.LifetimeStrategies;
+﻿using Cornflakes.LifetimeManagers;
 
 namespace Cornflakes
 {
@@ -8,10 +8,10 @@ namespace Cornflakes
 
         public ServiceProviderBuilder()
         {
-            this.RegisterService<IProviderOfServices>(new TransientLifetime(sp => sp));
+            this.RegisterService<IProviderOfServices>(new TransientLifetime((IProviderOfServices sp, out object instance) => instance = sp));
         }
 
-        public IServiceProviderBuilder RegisterService<TService>(ILifetimeStrategy creationStrategy)
+        public IServiceProviderBuilder RegisterService<TService>(ILifetimeManager creationStrategy)
         {
             this.serviceProvider.RegisterService(new ServiceDescriptor(
                 typeof(TService),
@@ -22,7 +22,7 @@ namespace Cornflakes
 
         public IServiceProviderBuilder RegisterServices(IServiceCollection services)
         {
-            foreach (var service in services)
+            foreach (ServiceDescriptor service in services)
             {
                 this.serviceProvider.RegisterService(service);
             }
@@ -33,6 +33,5 @@ namespace Cornflakes
         {
             return this.serviceProvider;
         }
-
     }
 }

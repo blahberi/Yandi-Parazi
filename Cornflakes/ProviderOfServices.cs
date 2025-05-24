@@ -9,33 +9,37 @@ namespace Cornflakes
 
         public ProviderOfServices() 
         {
-            services = new ConcurrentDictionary<Type, ServiceDescriptor>();
+            this.services = new ConcurrentDictionary<Type, ServiceDescriptor>();
             this.Scope = new Scope(this);
+        }
+
+        public void Initialize()
+        {
+            foreach (ServiceDescriptor service in this.services.Values) service.LifetimeManager.Initialize(this);
         }
 
         public IScope Scope { get; }
 
         public void RegisterService(ServiceDescriptor descriptor)
         {
-            if (this.services.ContainsKey(descriptor.ServiceType))
+            if (!this.services.TryAdd(descriptor.ServiceType, descriptor))
             {
                 throw new InvalidOperationException($"Can't register service of type {descriptor.ServiceType} since there is already a service registered with the same type.");
             }
-            this.services[descriptor.ServiceType] = descriptor;
         }
 
         public object GetService(Type serviceType)
         {
             if (this.services.TryGetValue(serviceType, out ServiceDescriptor? descriptor))
             {
-                return descriptor.LifetimeStrategy.GetInstance(this);
+                return descriptor.LifetimeManager.GetInstance(this);
             }
             throw new KeyNotFoundException($"Service of type {serviceType} not found.");
         }
 
         public IScope CreateScope()
         {
-            return CreateCopy().Scope;
+            return this.CreateCopy().Scope;
         }
 
         public void Dispose()
@@ -45,9 +49,9 @@ namespace Cornflakes
             this.Scope.Dispose();
         }
 
-        private IProviderOfServices CreateCopy()
+        private ProviderOfServices CreateCopy()
         {
-            return new ProviderOfServices(services);
+            return new ProviderOfServices(this.services);
         }
 
         private ProviderOfServices(ConcurrentDictionary<Type, ServiceDescriptor> services)

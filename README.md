@@ -1,28 +1,28 @@
 # Cornflakes
-Cornflakes is a lightweight, blazingly fast Dependency Injection framework for .NET written in C#.
+Cornflakes is a lightweight, blazingly fast and highly extendable Dependency Injection framework for .NET written in C#.
 <br>
 # Usage
 ## Defining Services
 A **Service** refers to an interface which is implemented by a class, which we call the **Service Implementation**. A service implementation can depend on other services by requiring their type through the constructor.
 
 ```csharp
-// Service Type
+// Service
 interface IFoo
 {
     void FooMethod();
 }
 
-// Another service type
+// Another service
 interface IBar
 {
     int BarMethod();
 }
 
-// Service Implementation for type IFoo
+// Service Implementation for IFoo
 class Foo : IFoo
 {
     private readonly IBar bar;
-    public Foo(IBar bar) // Depends on service with type IBar
+    public Foo(IBar bar) // Depends on service IBar
     {
         this.bar = bar;
         Console.WriteLine($"Foo has been initialized: {this.GetHashCode()}");
@@ -39,8 +39,8 @@ class Foo : IFoo
 ```
 In the example above, the service is `IFoo`, and the implementation is `Foo`, which depends on the service `IBar`.
 
-## Lifetime Strategies
-**Lifetime Strategies** define how instances of a service should be created when requested. Cornflakes comes with a couple of built-in lifetime strategies.
+## Lifetime Manager
+**Lifetime Managers** define how instances of a service should be created when requested. Cornflakes comes with a couple of built-in lifetime managers.
 
 ### Transient
 Creates a new instance of the service every time it is requested.
@@ -49,7 +49,7 @@ Creates a new instance of the service every time it is requested.
 Creates only a single instance of the service, and returns that same single instance every time it is requested.
 
 ### Scoped
-Is similar to the Singleton lifetime strategy. However, instead of having a single global instance, every **Scope** (which will be discussed later) has its own unique instance.
+Is similar to the Singleton lifetime manager. However, instead of having a single global instance, every **Scope** (which will be discussed later) has its own unique instance.
 
 We can also define custom creation startegies, more on that later.
 
@@ -57,7 +57,7 @@ We can also define custom creation startegies, more on that later.
 Service registration is done through the `ServiceProviderBuilder`.
 
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
     .RegisterSingleton<IFoo, Foo>()
     .RegisterTransient<IBar, Bar>()
     .RegisterScoped<IBaz, Baz>()
@@ -67,7 +67,7 @@ When registering a service, we specify the **Service**, **Service Implementation
 
 In the example above, we registered the following services:
 
-| Service | Service Implementation | lifetime strategy          |
+| Service | Service Implementation | Lifetime Manager           |
 |---------|------------------------|----------------------------|
 | `IFoo`  | `Foo`                  | Singleton                  |
 | `IBar`  | `Bar`                  | Transient                  |
@@ -85,10 +85,10 @@ fooService.FooMethod();
 ```
 Notice how the framework automatically resolves the dependencies of the service implementation.
 
-**note:** The service being requested, all of its dependencies, and all of their dependencies (and so on, recursively), need to be registered. Thus in this example, the service with `IFoo` needs to be registered. And if the service implemenetation depends on the service `IBar`, then it needs to be registered as well.
+> **Note** - The service being requested, all of its dependencies, and all of their dependencies (and so on, recursively), need to be registered. Thus in this example, the service with `IFoo` needs to be registered. And if the service implemenetation depends on the service `IBar`, then it needs to be registered as well.
 
 ## Scopes
-Cornflakes provides a **Scope** system which allows for more granular control over the lifetime of instances of a service. Within a **Scope**, Scoped services (services that use the Scoped lifetime strategy) are instantiated once. Each scope has its own single instance of the Scoped service.
+Cornflakes provides a **Scope** system which allows for more granular control over the lifetime of instances of a service. Within a **Scope**, Scoped services (services that use the Scoped lifetime manager) are instantiated once. Each scope has its own single instance of the Scoped service.
 
 ### Using Scopes
 We can create a scope using the service provider's `CreateScope()` method.
@@ -98,9 +98,9 @@ In the following example, assume that the service `IFoo` is Scoped.
 using (IScope scope = serviceProvider.CreateScope()) 
 {
     // Get the scope's service provider.
-    IServiceProvider scopedProvider = scope.ServiceProvider;
+    IProviderOfServices scopedProvider = scope.ServiceProvider;
 
-    // Request the service with type IFoo from within the scope.
+    // Request the service IFoo from within the scope.
     IFoo fooService1 = scopedProvider.GetService<IFoo>();
     IFoo fooService2 = scopedProvider.GetService<IFoo>();
 
@@ -113,9 +113,9 @@ using (IScope scope = serviceProvider.CreateScope())
 using (IScope scope = serviceProvider.CreateScope()) 
 {
     // Get the scope's service provider.
-    IServiceProvider scopedProvider = scope.ServiceProvider;
+    IProviderOfServices scopedProvider = scope.ServiceProvider;
 
-    // Request the service with type IFoo from within a different scope.
+    // Request the service IFoo from within a different scope.
     IFoo fooService3 = scopedProvider.GetService<IFoo>();
     IFoo fooService4 = scopedProvider.GetService<IFoo>();
 
@@ -147,112 +147,153 @@ using (IScope outerScope = serviceProvider.CreateScope())
 }
 ```
 
-## Service Factory Methods
-**Service Factory Methods** are methods that create a new instance of a service. They are called by the lifetime strategy whenever it creates a new instance of a service. Cornflakes provides a default service factory method which is used when a custom factory method is not provided when registering a service.
+## Member Injection
+Cornflakes allows for injecting dependnecies through members, instead of the constructor. This is useful for legacy codebases that have *circular dependencies*.
 
-
-### Custom Service Factory Methods
-We can define custom factory methods, which can be useful when we need to perform some custom logic when creating a service instance. Custom factory methods are defined when registering a service, and they are defined as delegates that take an `IServiceProvider` as an argument and return an instance of the service.
+For example, let us assume that `Foo` depends on `IBar` and `Bar` depends on `IFoo`. We can resolve this situation using **Member Injection**.
+We can use the `[Inject]` attribute to mark fields and properties that we want to inject dependencies through them.
 
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    .RegisterSingleton<IFoo, Foo>() // Default factory method
-    .RegisterTransient<IBar>(serviceProvider => {
-        // Custom factory method
+class Foo : IFoo {
+    [Inject]
+    private readonly IBar bar;
+    // Foo implementation ...
+}
+
+class Bar : IBar {
+    [Inject]
+    private readonly IFoo foo;
+    // Bar implementation
+}
+```
+> **Important** - Circular dependencies are a bad habbit. This feature is targeted at large legacy codebases that already have circular dependencies rooted deep in them. It is highly recommended you don't rely on this feature, and instead plan clean modular architectures with no circular dependencies.
+<br>
+*Member injection displays warnings as they are highly unrecommmended*
+
+## Service Factory Functions 
+**Service Factory Functions** are methods that create a new instance of a service. They are called by the lifetime manager whenever it creates a new instance of a service. Cornflakes provides a default service factory function which is used when a custom factory function is not provided when registering a service.
+
+
+### Custom Service Factory Functions
+We can define custom factory functions, which can be useful when we need to perform some custom logic when creating a service instance. Custom factory functions are defined when registering a service, and they are defined as delegates that take an `IProviderOfServices` as an argument and return an instance of the service.
+
+```csharp
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
+    .RegisterSingleton<IFoo, Foo>() // Default factory function
+    .RegisterTransient<IBar>(sp => {
+        // Custom factory function
         return new Bar();
     }) 
     .RegisterScoped<IBaz, Baz>()
     .Build();
 ```
 
-If a service implementation depends on another service and we are using a custom factory method for that service, we have to resolve the dependencies ourselves within the factory method.
+If a service implementation depends on another service and we are using a custom factory function for that service, we have to resolve the dependencies ourselves within the factory function.
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    .RegisterSingleton<IFoo, Foo>() // Default factory method
-    .RegisterTransient<IBar>(serviceProvider => {
-        // Custom factory method
-        IFoo foo = serviceProvider.GetService<IFoo>();
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
+    .RegisterTransient<IBar>(sp => {
+        // Custom factory function
+        IFoo foo = sp.GetService<IFoo>();
         return new Bar(foo); // Resolve the dependency (Bar depends on IFoo)
     }) 
     .RegisterScoped<IBaz, Baz>()
     .Build();
 ```
 
-### Default Service Factory Method
-The default service factory method simply creates a new instance of the service and resolves its dependencies. Cornflakes will use the default service factory method if a custom factory method is not provided when registering a service. Cornflakes uses the JIT to dynamically generate and compile the default service factory method, which provides high performance service instantiation and dependency resolution.
+Service factory functions do not support member injection. Use the `AttachMemberInjection<TImplementation>()` method to add member injection support.
+
+### Custom Service Loader Functions
+```csharp
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
+    .RegisterTransient<IBar>(((sp => {
+        // Custom factory function
+        IFoo foo = sp.GetService<IFoo>();
+        return new Bar(foo); // Resolve the dependency (Bar depends on IFoo)
+    }).AttachMemberInjection<Bar>()) // add member injection
+    .RegisterScoped<IBaz, Baz>()
+    .Build();
+```
+
+### Default Service Factory Function
+The default service factory function simply creates a new instance of the service and resolves its dependencies through the constructor and through member injection as discussed earlier. Cornflakes will use the default service factory function if a custom factory function is not provided when registering a service.
+
+Cornflakes uses the JIT to dynamically generate and compile the default service factory function, which provides high performance service instantiation and dependency resolution.
 For example, if we have the follwing service registration:
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
     .RegisterSingleton<IFoo, Foo>() // Assume Foo depends on IBar and IBaz
     .RegisterTransient<IBar, Bar>() // Assume Bar depends on IBaz
     .RegisterScoped<IBaz, Baz>() // Assume Baz has no dependencies
     .Build();
 ```
-Then the default service factory methods generated by Cornflakes would look like this:
+Then the default service loader functions generated by Cornflakes would look like this:
 
 ```csharp
-// IFoo Default Service Factory Method
-(IServiceProvider serviceProvider) => {
+// IFoo Default Service Factory Function
+((IProviderOfServices serviceProvider) => {
     return new Foo(serviceProvider.GetService<IBar>(), serviceProvider.GetService<IBaz>());
-}
+}).AttachMemberInjection<Foo>()
 
-// IBar Default Service Factory Method
-(IServiceProvider serviceProvider) => {
+// IBar Default Service Factory Function
+((IProviderOfServices serviceProvider) => {
     return new Bar(serviceProvider.GetService<IBaz>());
-}
+}).AttachMemberInjection<Bar>()
 
-// IBaz Default Service Factory Method
-(IServiceProvider serviceProvider) => {
+// IBaz Default Service Factory Function
+(IProviderOfServices serviceProvider) => {
     return new Baz();
-}
+}).AttachMemberInjection<Baz>()
 ```
 
-The default service factory method can be retrieved by using the `DefaultServiceFactory.GetServiceFactory<TImplementation>()` method where `TImplementation` is the service implementation.
-We can even use the default service factory method as a custom factory method. In fact,
+the `AttachMemberInjection<TImplementation>()` method uses IL emission to generate blazingly fast member injection functions.
+
+
+The default service factory function can be retrieved by using the `DependencyResolver.GetServiceFactory<TImplementation>()` method where `TImplementation` is the service implementation.
+We can even use the default service factory function as a custom factory function. In fact,
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    .RegisterSingleton<IFoo, Foo>() // Default factory method
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
+    .RegisterSingleton<IFoo, Foo>() // Default factory function
     .Build();
 ```
 is completely equivalent to
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    // Passing the default factory method as a custom factory method
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
+    // Passing the default factory function as a custom factory function
     .RegisterSingleton<IFoo>(DefaultServiceFactory.GetServiceFactory<Foo>())
     .Build();
 ```
 Although the former is cleaner, less verbose, and more concise than the latter, which is why it is recommended.
 
-## Custom Lifetime Strategies
-Custom lifetime strategies can be useful when we need to perform some custom logic for handling the lifetime of service instances. We can define custom lifetime strategies by implementing the `ILifetimeStrategy` interface. As an example, we will implement the `Transient` and `Singleton` lifetime strategies.
+## Custom Lifetime Managers
+Custom lifetime managers can be useful when we need to perform some custom logic for handling the lifetime of service instances. We can define custom lifetime managers by implementing the `ILifetimeManager` interface. As an example, we will implement the `Transient` and `Singleton` lifetime managers. For the sake of simplicity, we will not implement thread-safty. However, rest assured, all the build-in lifetime managers are fully thread safe.
 
-### Transient lifetime Strategy Implementation
+### Transient lifetime Manager Implementation
 ```csharp
-class CustomTransientCreation: ILifetimeStrategy
+class CustomTransientLifetime: ILifetimeManager
 {
     private readonly ServiceFactory serviceFactory;
 
-    public TransientCreation(ServiceFactory serviceFactory) 
+    public CustomTransientLifetime(ServiceFactory serviceFactory) 
     {
         this.serviceFactory = serviceFactory;
     }
 
-    public object GetInstance(IServiceProvider serviceProvider)
+    public object GetInstance(IProviderOfServices serviceProvider)
     {
         // Custom logic to create a service instance
         return this.serviceFactory(serviceProvider);
     }
 }
 ```
-It is good practice to decouple the instantitation logic from the lifetime strategy by requiring a `ServiceFactory` delegate in the constructor, which allows for custom service factory methods.
+It is good practice to decouple the instantitation logic from the lifetime manager by requiring a `ServiceFactory` delegate in the constructor, which allows for custom service factory functions.
 
-Now we can register services using our custom lifetime strategy. For the examples below, we will assume that `Bar` depends on `IFoo`.
+Now we can register services using our custom lifetime manager. For the examples below, we will assume that `Bar` depends on `IFoo`.
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    .RegisterService<IFoo, Foo>(new CustomTransientCreation(
-        DefaultServiceFactory.GetServiceFactory<Foo>())) // Default factory method
-    .RegisterService<IBar, Bar>(new CustomTransientCreation((serviceProvider) => {
-        // Custom factory method
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
+    .RegisterService<IFoo, Foo>(new CustomTransientLifetime(
+        DefaultServiceFactory.GetServiceFactory<Foo>())) // Default factory function
+    .RegisterService<IBar, Bar>(new CustomTransientLifetime((serviceProvider) => {
+        // Custom factory function
         IFoo foo = serviceProvider.GetService<IFoo>();
         return new Bar(foo);
     }))
@@ -261,16 +302,16 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
 
 ### Singleton lifetime Strategy Implementation
 ```csharp
-class CustomSingletonCreation: ILifetimeStrategy
+class CustomSingletonLifetime: ILifetimeManager
 {
     private readonly ServiceFactory serviceFactory;
     private object instance;
-    public SingletonCreation(ServiceFactory serviceFactory) 
+    public CustomSingletonLifetime(ServiceFactory serviceFactory) 
     {
         this.serviceFactory = serviceFactory;
     }
 
-    public object GetInstance(IServiceProvider serviceProvider)
+    public object GetInstance(IProviderOfServices serviceProvider)
     {
         if (this.instance == null)
         {
@@ -282,11 +323,11 @@ class CustomSingletonCreation: ILifetimeStrategy
 ```
 Then service registation is performed as follows:
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    .RegisterService<IFoo>(new CustomSingletonCreation(
-        DefaultServiceFactory.GetServiceFactory<Foo>())) // Default factory method
-    .RegisterService<IBar>(new CustomSingletonCreation((serviceProvider) => {
-        // Custom factory method
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
+    .RegisterService<IFoo>(new CustomSingletonLifetime(
+        DefaultServiceFactory.GetServiceFactory<Foo>())) // Default factory function
+    .RegisterService<IBar>(new CustomSingletonLifetime((serviceProvider) => {
+        // Custom factory function
         IFoo foo = serviceProvider.GetService<IFoo>();
         return new Bar(foo);
     }))
@@ -294,7 +335,7 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
 ```
 
 ### Extending the Builder
-Notice that currently, registering services with our custom lifetime strategies is a bit verbose, unlike the built-in lifetime strategies. We can extend the `ServiceProviderBuilder` to provide a more fluent API for registering services with custom lifetime strategies.
+Notice that currently, registering services with our custom lifetime managers is a bit verbose, unlike the built-in lifetime managers. We can extend the `ServiceProviderBuilder` to provide a more fluent API for registering services with custom lifetime managers.
 
 ```csharp
 public static class CustomServiceProvideBuilderExtensions
@@ -302,38 +343,37 @@ public static class CustomServiceProvideBuilderExtensions
     public static IServiceProviderBuilder RegisterCustomTransient<TService>(
         this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
     {
-        return builder.RegisterService<TService>(new CustomTransientCreation(serviceFactory));
+        return builder.RegisterService<TService>(new CustomTransientLifetime(serviceFactory));
     }
 
     public static IServiceProviderBuilder RegisterCustomSingleton<TService>(
         this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
     {
-        return builder.RegisterService<TService>(new CustomSingletonCreation(serviceFactory));
+        return builder.RegisterService<TService>(new CustomSingletonLifetime(serviceFactory));
     }
 
-    // Extension methods for using the default service factory method
+    // Extension methods for using the default service factory function
     public static IServiceProviderBuilder RegisterCustomTransient<TService, TImplementation>(
         this IServiceProviderBuilder builder)
     {
-        return builder.RegisterService<TService>(new CustomTransientCreation(
-            DefaultServiceFactory.GetServiceFactory<TImplementation>()));
-        ));
+        return builder.RegisterService<TService>(new CustomTransientLifetime(
+            DependencyResolver.GetServiceFactory<TImplementation>()));
     }
 
     public static IServiceProviderBuilder RegisterCustomSingleton<TService, TImplementation>(
         this IServiceProviderBuilder builder)
     {
-        return builder.RegisterService<TService>(new CustomSingletonCreation(
-            DefaultServiceFactory.GetServiceFactory<TImplementation>()));
+        return builder.RegisterService<TService>(new CustomSingletonLifetime(
+            DependencyResolver.GetServiceFactory<TImplementation>()));
     }
 }
 ```
-Now the service registration process is much more fluent and streamlined.
+Now the service registration process is much more fluent and streamlined, and is comparable to the built-in lifetime managers.
 ```csharp
-IServiceProvider serviceProvider = new ServiceProviderBuilder()
-    .RegisterCustomSingleton<IFoo, Foo>() // Default factory method
+IProviderOfServices serviceProvider = new ServiceProviderBuilder()
+    .RegisterCustomSingleton<IFoo, Foo>() // Default factory function
     .RegisterCustomTransient<IBar>((serviceProvider) => {
-        // Custom factory method
+        // Custom factory function
         IFoo foo = serviceProvider.GetService<IFoo>();
         return new Bar(foo);
     })
