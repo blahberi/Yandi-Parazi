@@ -169,7 +169,6 @@ class Bar : IBar {
 ```
 > [!WARNING]
 > Circular dependencies are a bad habbit. This feature is targeted at large legacy codebases that already have circular dependencies rooted deep in them. It is highly recommended you don't rely on this feature, and instead plan clean modular architectures with no circular dependencies.
-<br>
 *Member injection displays warnings as they are highly unrecommmended*
 
 ## Service Factory Functions 
