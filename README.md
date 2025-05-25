@@ -169,7 +169,7 @@ class Bar : IBar {
 ```
 > [!WARNING]
 > Circular dependencies are a bad habbit. This feature is targeted at large legacy codebases that already have circular dependencies rooted deep in them. It is highly recommended you don't rely on this feature, and instead plan clean modular architectures with no circular dependencies.
-*Member injection displays warnings as they are highly unrecommmended*
+**Member injection displays warnings as they are highly unrecommmended**
 
 ## Service Factory Functions 
 **Service Factory Functions** are functions that create a new instance of a service. They are called by the lifetime manager whenever it creates a new instance of a service.
