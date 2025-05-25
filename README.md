@@ -85,7 +85,8 @@ fooService.FooMethod();
 ```
 Notice how the framework automatically resolves the dependencies of the service implementation.
 
-> **Note** - The service being requested, all of its dependencies, and all of their dependencies (and so on, recursively), need to be registered. Thus in this example, the service with `IFoo` needs to be registered. And if the service implemenetation depends on the service `IBar`, then it needs to be registered as well.
+> [!IMPORTANT]
+> The service being requested, all of its dependencies, and all of their dependencies (and so on, recursively), need to be registered. Thus in this example, the service with `IFoo` needs to be registered. And if the service implemenetation depends on the service `IBar`, then it needs to be registered as well.
 
 ## Scopes
 Cornflakes provides a **Scope** system which allows for more granular control over the lifetime of instances of a service. Within a **Scope**, Scoped services (services that use the Scoped lifetime manager) are instantiated once. Each scope has its own single instance of the Scoped service.
@@ -166,7 +167,8 @@ class Bar : IBar {
     // Bar implementation
 }
 ```
-> **Important** - Circular dependencies are a bad habbit. This feature is targeted at large legacy codebases that already have circular dependencies rooted deep in them. It is highly recommended you don't rely on this feature, and instead plan clean modular architectures with no circular dependencies.
+> [!WARNING]
+> Circular dependencies are a bad habbit. This feature is targeted at large legacy codebases that already have circular dependencies rooted deep in them. It is highly recommended you don't rely on this feature, and instead plan clean modular architectures with no circular dependencies.
 <br>
 *Member injection displays warnings as they are highly unrecommmended*
 
