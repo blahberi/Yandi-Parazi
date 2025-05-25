@@ -172,8 +172,7 @@ class Bar : IBar {
 *Member injection displays warnings as they are highly unrecommmended*
 
 ## Service Factory Functions 
-**Service Factory Functions** are methods that create a new instance of a service. They are called by the lifetime manager whenever it creates a new instance of a service. Cornflakes provides a default service factory function which is used when a custom factory function is not provided when registering a service.
-
+**Service Factory Functions** are functions that create a new instance of a service. They are called by the lifetime manager whenever it creates a new instance of a service.
 
 ### Custom Service Factory Functions
 We can define custom factory functions, which can be useful when we need to perform some custom logic when creating a service instance. Custom factory functions are defined when registering a service, and they are defined as delegates that take an `IProviderOfServices` as an argument and return an instance of the service.
@@ -202,8 +201,6 @@ IProviderOfServices serviceProvider = new ServiceProviderBuilder()
 ```
 
 Service factory functions do not support member injection. Use the `AttachMemberInjection<TImplementation>()` method to add member injection support.
-
-### Custom Service Loader Functions
 ```csharp
 IProviderOfServices serviceProvider = new ServiceProviderBuilder()
     .RegisterTransient<IBar>(((sp => {
