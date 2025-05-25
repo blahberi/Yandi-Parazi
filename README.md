@@ -257,7 +257,7 @@ is completely equivalent to
 ```csharp
 IProviderOfServices serviceProvider = new ServiceProviderBuilder()
     // Passing the default factory function as a custom factory function
-    .RegisterSingleton<IFoo>(DefaultServiceFactory.GetServiceFactory<Foo>())
+    .RegisterSingleton<IFoo>(DependencyResolver.GetServiceFactory<Foo>().AttachMemberInjection<Foo>())
     .Build();
 ```
 Although the former is cleaner, less verbose, and more concise than the latter, which is why it is recommended.
