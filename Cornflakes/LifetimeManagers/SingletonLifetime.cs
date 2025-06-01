@@ -3,12 +3,12 @@
     internal class SingletonLifetime : ILifetimeManager
     {
         private object? instance;
-        private readonly ServiceLoader _serviceLoader;
+        private readonly ServiceCreationPipeline _serviceCreationPipeline;
         private readonly object lockObject = new object();
 
-        public SingletonLifetime(ServiceLoader serviceLoader)
+        public SingletonLifetime(ServiceCreationPipeline serviceCreationPipeline)
         {
-            this._serviceLoader = serviceLoader;
+            this._serviceCreationPipeline = serviceCreationPipeline;
         }
 
         private bool Initialized => this.instance != null;
@@ -19,7 +19,7 @@
             lock (this.lockObject)
             {
                 if (this.Initialized) return;
-                this._serviceLoader(serviceProvider, out this.instance);
+                this._serviceCreationPipeline(serviceProvider, out this.instance);
             }
         }
 

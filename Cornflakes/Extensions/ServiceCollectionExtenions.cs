@@ -9,18 +9,18 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return collection.AddService<TService>(new TransientLifetime(
-                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().UseMemberInjection<TImplementation>()
                 ));
         }
         public static IServiceCollection AddTransient<TService>(this IServiceCollection collection,
-            ServiceLoader serviceLoader)
+            ServiceCreationPipeline serviceCreationPipeline)
         {
-            return collection.AddService<TService>(new TransientLifetime(serviceLoader));
+            return collection.AddService<TService>(new TransientLifetime(serviceCreationPipeline));
         }
         public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
             where TService : class
         {
-            return collection.AddTransient<TService>(serviceFactory.ToLoader());
+            return collection.AddTransient<TService>(serviceFactory.ToPipeline());
         }
 
         public static IServiceCollection AddSingleton<TService, TImplementation>(this IServiceCollection collection)
@@ -28,18 +28,18 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return collection.AddService<TService>(new SingletonLifetime(
-                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().UseMemberInjection<TImplementation>()
                 ));
         }
-        public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceLoader serviceLoader)
+        public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceCreationPipeline serviceCreationPipeline)
             where TService : class
         {
-            return collection.AddService<TService>(new SingletonLifetime(serviceLoader));
+            return collection.AddService<TService>(new SingletonLifetime(serviceCreationPipeline));
         }
         public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
             where TService : class
         {
-            return collection.AddSingleton<TService>(serviceFactory.ToLoader());
+            return collection.AddSingleton<TService>(serviceFactory.ToPipeline());
         }
         public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, TService instance)
             where TService : class
@@ -52,20 +52,20 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return collection.AddService<TService>(new ScopedLifetime(
-                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().UseMemberInjection<TImplementation>()
                 ));
         }
-        public static IServiceCollection AddScoped<TService>(this IServiceCollection collection, ServiceLoader serviceLoader)
+        public static IServiceCollection AddScoped<TService>(this IServiceCollection collection, ServiceCreationPipeline serviceCreationPipeline)
             where TService : class
         {
-            return collection.AddService<TService>(new ScopedLifetime(serviceLoader));
+            return collection.AddService<TService>(new ScopedLifetime(serviceCreationPipeline));
         }
 
         public static IServiceCollection AddScoped<TService>(this IServiceCollection collection,
             ServiceFactory serviceFactory)
             where TService : class
         {
-            return collection.AddScoped<TService>(serviceFactory.ToLoader());
+            return collection.AddScoped<TService>(serviceFactory.ToPipeline());
         }
     }
 }

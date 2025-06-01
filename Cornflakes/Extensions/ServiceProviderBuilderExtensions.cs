@@ -9,20 +9,20 @@ namespace Cornflakes
             where TImplementation : TService
         {
             builder.RegisterService<TService>(new TransientLifetime(
-                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().UseMemberInjection<TImplementation>()
                 ));
             return builder;
         }
-        public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, ServiceLoader serviceLoader)
+        public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, ServiceCreationPipeline serviceCreationPipeline)
             where TService : class
         {
-            builder.RegisterService<TService>(new TransientLifetime(serviceLoader));
+            builder.RegisterService<TService>(new TransientLifetime(serviceCreationPipeline));
             return builder;
         }
         public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
             where TService : class
         {
-            return builder.RegisterTransient<TService>(serviceFactory.ToLoader());
+            return builder.RegisterTransient<TService>(serviceFactory.ToPipeline());
         }
 
         public static IServiceProviderBuilder RegisterSingleton<TService, TImplementation>(this IServiceProviderBuilder builder)
@@ -30,18 +30,18 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return builder.RegisterService<TService>(new SingletonLifetime(
-                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().UseMemberInjection<TImplementation>()
                 ));
         }
-        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceLoader serviceLoader)
+        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceCreationPipeline serviceCreationPipeline)
             where TService : class
         {
-            return builder.RegisterService<TService>(new SingletonLifetime(serviceLoader));
+            return builder.RegisterService<TService>(new SingletonLifetime(serviceCreationPipeline));
         }
         public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
             where TService : class
         {
-            return builder.RegisterSingleton<TService>(serviceFactory.ToLoader());
+            return builder.RegisterSingleton<TService>(serviceFactory.ToPipeline());
         }
         public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, TService instance)
             where TService : class
@@ -55,20 +55,20 @@ namespace Cornflakes
             where TImplementation : TService
         {
             return builder.RegisterService<TService>(new ScopedLifetime(
-                    DependencyResolver.GetServiceFactory<TImplementation>().AttachMemberInjection<TImplementation>()
+                    DependencyResolver.GetServiceFactory<TImplementation>().UseMemberInjection<TImplementation>()
                 ));
         }
-        public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder, ServiceLoader serviceLoader)
+        public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder, ServiceCreationPipeline serviceCreationPipeline)
             where TService : class
         {
-            return builder.RegisterService<TService>(new ScopedLifetime(serviceLoader));
+            return builder.RegisterService<TService>(new ScopedLifetime(serviceCreationPipeline));
         }
 
         public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder,
             ServiceFactory serviceFactory)
             where TService : class
         {
-            return builder.RegisterScoped<TService>(serviceFactory.ToLoader());
+            return builder.RegisterScoped<TService>(serviceFactory.ToPipeline());
         }
     }
 }
