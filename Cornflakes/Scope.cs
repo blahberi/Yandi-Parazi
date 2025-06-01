@@ -3,15 +3,15 @@
     internal class Scope : IScope
     {
         private bool isDisposed = false;
-        private List<ScopeDisposalHandler> disposalHandlers = new List<ScopeDisposalHandler>();
+        private List<ScopeDisposalHandler> disposalHandlers = [];
 
 
-        public Scope(IProviderOfServices serviceProvider) 
+        public Scope(IServiceProvider serviceProvider) 
         {
             this.ServiceProvider = serviceProvider;
         }
 
-        public IProviderOfServices ServiceProvider { get; }
+        public IServiceProvider ServiceProvider { get; }
 
         public void Subscribe(ScopeDisposalHandler handler)
         {
@@ -22,7 +22,6 @@
         {
             if (this.isDisposed) return;
             this.isDisposed = true;
-            this.ServiceProvider.Dispose();
             this.InvokeDisposalEvent();
         }
 

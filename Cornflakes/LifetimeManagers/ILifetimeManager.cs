@@ -2,7 +2,7 @@
 {
     public interface ILifetimeManager
     {
-        void Initialize(IProviderOfServices serviceProvider);
+        void Initialize(IServiceProvider serviceProvider);
         object GetInstance(IProviderOfServices serviceProvider);
     }
 }

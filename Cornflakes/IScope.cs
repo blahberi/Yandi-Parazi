@@ -3,7 +3,7 @@
     public delegate void ScopeDisposalHandler(IScope scope);
     public interface IScope : IDisposable
     {
-        IProviderOfServices ServiceProvider { get; }
+        IServiceProvider ServiceProvider { get; }
         void Subscribe(ScopeDisposalHandler handler);
     }
 }

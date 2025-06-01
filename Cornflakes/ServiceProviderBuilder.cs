@@ -8,7 +8,8 @@ namespace Cornflakes
 
         public ServiceProviderBuilder()
         {
-            this.RegisterService<IProviderOfServices>(new TransientLifetime((IProviderOfServices sp, out object instance) => instance = sp));
+            
+            this.RegisterTransient<IProviderOfServices>(sp => sp);
         }
 
         public IServiceProviderBuilder RegisterService<TService>(ILifetimeManager creationStrategy)

@@ -6,6 +6,6 @@ namespace Cornflakes
     {
         IServiceProviderBuilder RegisterService<TService>(ILifetimeManager creationStrategy); 
         IServiceProviderBuilder RegisterServices(IServiceCollection services);
-        IProviderOfServices Build();
+        IServiceProvider Build();
     }
 }

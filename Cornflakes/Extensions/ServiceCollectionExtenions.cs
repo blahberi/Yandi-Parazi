@@ -13,9 +13,9 @@ namespace Cornflakes
                 ));
         }
         public static IServiceCollection AddTransient<TService>(this IServiceCollection collection,
-            ServiceCreationPipeline serviceCreationPipeline)
+            OnInitialized onInitialized)
         {
-            return collection.AddService<TService>(new TransientLifetime(serviceCreationPipeline));
+            return collection.AddService<TService>(new TransientLifetime(onInitialized));
         }
         public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
             where TService : class
@@ -31,10 +31,10 @@ namespace Cornflakes
                     DependencyResolver.GetServiceFactory<TImplementation>().UseMemberInjection<TImplementation>()
                 ));
         }
-        public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceCreationPipeline serviceCreationPipeline)
+        public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, OnInitialized onInitialized)
             where TService : class
         {
-            return collection.AddService<TService>(new SingletonLifetime(serviceCreationPipeline));
+            return collection.AddService<TService>(new SingletonLifetime(onInitialized));
         }
         public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
             where TService : class
@@ -55,10 +55,10 @@ namespace Cornflakes
                     DependencyResolver.GetServiceFactory<TImplementation>().UseMemberInjection<TImplementation>()
                 ));
         }
-        public static IServiceCollection AddScoped<TService>(this IServiceCollection collection, ServiceCreationPipeline serviceCreationPipeline)
+        public static IServiceCollection AddScoped<TService>(this IServiceCollection collection, OnInitialized onInitialized)
             where TService : class
         {
-            return collection.AddService<TService>(new ScopedLifetime(serviceCreationPipeline));
+            return collection.AddService<TService>(new ScopedLifetime(onInitialized));
         }
 
         public static IServiceCollection AddScoped<TService>(this IServiceCollection collection,

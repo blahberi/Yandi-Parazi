@@ -1,35 +1,53 @@
 ﻿namespace Cornflakes;
 
+public delegate object ServiceFactory(IServiceProvider serviceProvider);
+public delegate object ServiceFactoryWrapper(IServiceProvider serviceProvider, object instance);
+public delegate void OnInitialized(IServiceProvider serviceProvider, object instance);
 
-public delegate object ServiceFactory(IProviderOfServices serviceProvider);
-public delegate void ServiceCreationPipeline(IProviderOfServices serviceProvider, out object instance);
-
-public static class ServiceFactoryExtensions
+internal class ServiceCreationPipeline : IServiceCreationPipeline, IServiceCreationPipelineBuilder
 {
-    public static ServiceCreationPipeline ToPipeline(this ServiceFactory factory)
+    private ServiceFactory serviceFactory;
+    private OnInitialized? onInitialized;
+    
+    public ServiceCreationPipeline(ServiceFactory serviceFactory)
     {
-        return (IProviderOfServices serviceProvider, out object instance) =>
-        {
-            instance = factory(serviceProvider);
-        };
+        this.serviceFactory = serviceFactory;
+    }
+    public void Invoke(IServiceProvider serviceProvider, out object instance)
+    {
+        instance = this.serviceFactory(serviceProvider);
+        this.onInitialized?.Invoke(serviceProvider, instance);
+    }
+
+    public IServiceCreationPipelineBuilder Add(ServiceFactoryWrapper serviceProviderWrapper)
+    {
+        ServiceFactory currentFactory = this.serviceFactory;
+        this.serviceFactory = serviceProvider => 
+            serviceProviderWrapper(serviceProvider, currentFactory(serviceProvider));
+        return this;
     }
     
-    public static ServiceFactory ToFactory(this ServiceCreationPipeline creationPipeline)
+    public IServiceCreationPipelineBuilder Add(OnInitialized onInitialized)
     {
-        return (IProviderOfServices serviceProvider) =>
-        {
-            creationPipeline(serviceProvider, out object instance);
-            return instance;
-        };
+        this.onInitialized += onInitialized;
+        return this;
     }
-
-    public static ServiceCreationPipeline Attach(this ServiceCreationPipeline creationPipeline, ServiceCreationPipeline other)
+    
+    public IServiceCreationPipeline Build()
     {
-        return (IProviderOfServices provider, out object instance) =>
-        {
-            creationPipeline(provider, out object obj);
-            instance = obj;
-            other(provider, out instance);
-        };
+        return this;
+    }
+}
+
+public static class ServiceCreationPipelineBuilder
+{
+    public static IServiceCreationPipelineBuilder Create(ServiceFactory serviceFactory)
+    {
+        return new ServiceCreationPipeline(serviceFactory);
+    }
+    
+    public static IServiceCreationPipelineBuilder ToPipeline(this ServiceFactory serviceFactory)
+    {
+        return Create(serviceFactory);
     }
 }

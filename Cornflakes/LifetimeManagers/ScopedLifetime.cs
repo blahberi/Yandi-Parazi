@@ -3,12 +3,12 @@
     internal class ScopedLifetime : ILifetimeManager
     {
         Dictionary<IScope, object> instances;
-        private readonly ServiceCreationPipeline _serviceCreationPipeline;
+        private readonly IServiceCreationPipeline creationPipeline;
         private readonly object lockObject = new object();
 
-        public ScopedLifetime(ServiceCreationPipeline serviceCreationPipeline)
+        public ScopedLifetime(IServiceCreationPipeline creationPipeline)
         {
-            this._serviceCreationPipeline = serviceCreationPipeline;
+            this.creationPipeline = creationPipeline;
             this.instances = new Dictionary<IScope, object>();
         }
         
@@ -52,10 +52,10 @@
             }
         }
 
-        private object registerInstance(IProviderOfServices serviceProvider)
+        private object registerInstance(IServiceProvider serviceProvider)
         {
             IScope scope = serviceProvider.Scope;
-            this._serviceCreationPipeline(serviceProvider, out object instance);
+            this.creationPipeline.Invoke(serviceProvider, out object instance);
             this.instances.Add(scope, instance);
             scope.Subscribe(this.scopedDisposed);
             return instance;

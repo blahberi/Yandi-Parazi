@@ -7,18 +7,19 @@ namespace Cornflakes
     {
         public ServiceDescriptor this[int index] 
         { 
-            get => Services[index];
+            get => this.Services[index];
             set
             {
-                if (IsReadOnly)
+                if (this.IsReadOnly)
                 {
-                    ThrowReadOnlyException();
+                    this.ThrowReadOnlyException();
                 }
-                Services[index] = value;
+
+                this.Services[index] = value;
             }
         }
 
-        public List<ServiceDescriptor> Services { get; } = new List<ServiceDescriptor>();
+        private List<ServiceDescriptor> Services { get; } = [];
 
         public IServiceCollection AddService<TService>(ILifetimeManager lifetimeManager)
         {
@@ -30,29 +31,29 @@ namespace Cornflakes
             return this;
         }
 
-        public int Count => Services.Count;
+        public int Count => this.Services.Count;
 
         public bool IsReadOnly { get; set; }
 
         public void Add(ServiceDescriptor item)
         {
-            Services.Add(item);
+            this.Services.Add(item);
         }
 
 
         public void Clear()
         {
-            Services.Clear();
+            this.Services.Clear();
         }
 
         public bool Contains(ServiceDescriptor item)
         {
-            return Services.Contains(item);
+            return this.Services.Contains(item);
         }
 
         public void CopyTo(ServiceDescriptor[] array, int arrayIndex)
         {
-            Services.CopyTo(array, arrayIndex);
+            this.Services.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<ServiceDescriptor> GetEnumerator()
