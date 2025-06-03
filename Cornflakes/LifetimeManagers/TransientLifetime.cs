@@ -2,16 +2,15 @@
 {
     internal class TransientLifetime : ILifetimeManager
     {
-        private readonly IServiceCreationPipeline creationPipeline;
-        public TransientLifetime(IServiceCreationPipeline creationPipeline) 
+        private readonly IServiceFactory serviceFactory;
+        public TransientLifetime(IServiceFactory serviceFactory) 
         {
-            this.creationPipeline = creationPipeline;
+            this.serviceFactory = serviceFactory;
         }
 
         public object GetInstance(IServiceProvider serviceProvider)
         {
-            this.creationPipeline.Invoke(serviceProvider, out object instance);
-            return instance;
+            return this.serviceFactory.Create(serviceProvider).GetService(serviceProvider);
         }
     }
 }

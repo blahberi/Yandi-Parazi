@@ -1,36 +1,35 @@
-﻿namespace Cornflakes.LifetimeManagers
+﻿namespace Cornflakes.LifetimeManagers;
+
+internal class SingletonLifetime : ILifetimeManager
 {
-    internal class SingletonLifetime : ILifetimeManager
+    private IServiceContainer? container;
+    private readonly IServiceFactory serviceFactory;
+    private readonly object lockObject = new object();
+
+    public SingletonLifetime(IServiceFactory serviceFactory)
     {
-        private object? instance;
-        private readonly IServiceCreationPipeline creationPipeline;
-        private readonly object lockObject = new object();
+        this.serviceFactory = serviceFactory;
+    }
 
-        public SingletonLifetime(IServiceCreationPipeline creationPipeline)
-        {
-            this.creationPipeline = creationPipeline;
-        }
+    private bool Initialized => this.container != null;
 
-        private bool Initialized => this.instance != null;
-
-        public void Initialize(IServiceProvider serviceProvider)
+    public void Initialize(IServiceProvider serviceProvider)
+    {
+        if (this.Initialized) return;
+        lock (this.lockObject)
         {
             if (this.Initialized) return;
-            lock (this.lockObject)
-            {
-                if (this.Initialized) return;
-                this.creationPipeline.Invoke(serviceProvider, out this.instance);
-            }
+            this.container = this.serviceFactory.Create(serviceProvider);
         }
+    }
 
-        public object GetInstance(IServiceProvider serviceProvider)
+    public object GetInstance(IServiceProvider serviceProvider)
+    {
+        if (this.Initialized) return this.container!.GetService(serviceProvider);
+        lock (this.lockObject)
         {
-            if (this.Initialized) return this.instance!;
-            lock (this.lockObject)
-            {
-                if (!this.Initialized) this.Initialize(serviceProvider);
-                return this.instance!;
-            }
+            if (!this.Initialized) this.Initialize(serviceProvider);
+            return this.container!.GetService(serviceProvider);
         }
     }
 }

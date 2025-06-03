@@ -4,16 +4,16 @@ namespace Cornflakes.Extensions
 {
     public static class ServiceProviderBuilderExtensions
     {
-        public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, IServiceCreationPipeline creationPipeline)
+        public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, IServiceFactory serviceFactory)
             where TService : class
         {
-            builder.RegisterService<TService>(new TransientLifetime(creationPipeline));
+            builder.RegisterService<TService>(new TransientLifetime(serviceFactory));
             return builder;
         }
-        public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
+        public static IServiceProviderBuilder RegisterTransient<TService>(this IServiceProviderBuilder builder, ServiceCreator serviceCreator)
             where TService : class
         {
-            return builder.RegisterTransient<TService>(serviceFactory.ToPipeline().Build());
+            return builder.RegisterTransient<TService>(serviceCreator.ToFactory().Build());
         }
         public static IServiceProviderBuilder RegisterTransient<TService, TImplementation>(this IServiceProviderBuilder builder)
             where TService : class 
@@ -25,15 +25,15 @@ namespace Cornflakes.Extensions
             return builder;
         }
 
-        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, IServiceCreationPipeline creationPipeline)
+        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, IServiceFactory creationPipeline)
             where TService : class
         {
             return builder.RegisterService<TService>(new SingletonLifetime(creationPipeline));
         }
-        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceFactory serviceFactory)
+        public static IServiceProviderBuilder RegisterSingleton<TService>(this IServiceProviderBuilder builder, ServiceCreator serviceCreator)
             where TService : class
         {
-            return builder.RegisterSingleton<TService>(serviceFactory.ToPipeline().Build());
+            return builder.RegisterSingleton<TService>(serviceCreator.ToFactory().Build());
         }
         public static IServiceProviderBuilder RegisterSingleton<TService, TImplementation>(this IServiceProviderBuilder builder)
             where TService : class
@@ -50,16 +50,16 @@ namespace Cornflakes.Extensions
             return builder;
         }
 
-        public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder, IServiceCreationPipeline creationPipeline)
+        public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder, IServiceFactory serviceFactory)
             where TService : class
         {
-            return builder.RegisterService<TService>(new ScopedLifetime(creationPipeline));
+            return builder.RegisterService<TService>(new ScopedLifetime(serviceFactory));
         }
         public static IServiceProviderBuilder RegisterScoped<TService>(this IServiceProviderBuilder builder,
-            ServiceFactory serviceFactory)
+            ServiceCreator serviceCreator)
             where TService : class
         {
-            return builder.RegisterScoped<TService>(serviceFactory.ToPipeline().Build());
+            return builder.RegisterScoped<TService>(serviceCreator.ToFactory().Build());
         }
         public static IServiceProviderBuilder RegisterScoped<TService, TImplementation>(this IServiceProviderBuilder builder)
             where TService : class

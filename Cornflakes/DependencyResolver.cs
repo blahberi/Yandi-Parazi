@@ -1,27 +1,23 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using Cornflakes.Extensions;
 
 namespace Cornflakes;
 
 public static class DependencyResolver
 {
-    public static ServiceFactory GetServiceFactory<TImplementation>()
+    public static ServiceCreator GetServiceFactory<TImplementation>()
     {
         return GenerateFactory(typeof(TImplementation));
     }
-    public static IServiceCreationPipelineBuilder WithMemberInjection<TImplementation>(this IServiceCreationPipelineBuilder pipelineBuilder)
+    internal static ServiceInitializer? TryGetMemberInjector<TImplementation>()
     {
-        OnInitialized? injector = TryCreateMemberInjector(typeof(TImplementation));
-        return injector == null ? pipelineBuilder : pipelineBuilder.Add(injector);
+        return TryCreateMemberInjector(typeof(TImplementation));
     }
+    
 
-    public static IServiceCreationPipelineBuilder WithMemberInjection<TImplementation>(this ServiceFactory serviceFactory)
-    {
-        return serviceFactory.ToPipeline().WithMemberInjection<TImplementation>();
-    }
-
-    private static ServiceFactory GenerateFactory(Type implementationType)
+    private static ServiceCreator GenerateFactory(Type implementationType)
     {
         ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
         MethodInfo? GetService = typeof(IServiceProvider)
@@ -43,14 +39,14 @@ public static class DependencyResolver
 
         Expression constructionExpression = Expression.New(constructor, arguments);
 
-        return Expression.Lambda<ServiceFactory>(constructionExpression, serviceProviderParameter).Compile();
+        return Expression.Lambda<ServiceCreator>(constructionExpression, serviceProviderParameter).Compile();
     }
     
     private static readonly MethodInfo GetTypeFromHandle = 
         typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), BindingFlags.Static | BindingFlags.Public)!;
     private static readonly MethodInfo GetService =
         typeof(IServiceProvider).GetMethod(nameof(IServiceProvider.GetService), BindingFlags.Instance | BindingFlags.Public)!;
-    private static OnInitialized? TryCreateMemberInjector(Type implementationType)
+    private static ServiceInitializer? TryCreateMemberInjector(Type implementationType)
     {
         FieldInfo[] fields = implementationType
             .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
@@ -106,6 +102,6 @@ public static class DependencyResolver
         }
 
         il.Emit(OpCodes.Ret);
-        return method.CreateDelegate<OnInitialized>();
+        return method.CreateDelegate<ServiceInitializer>();
     }
 }

@@ -1,12 +1,10 @@
 ﻿using System.Collections.Concurrent;
-using Cornflakes.Extensions;
 
 namespace Cornflakes
 {
     internal class ServiceProvider: IServiceProvider
     {
         private readonly ConcurrentDictionary<Type, ServiceDescriptor> services;
-        private bool isDisposed;
 
         public ServiceProvider(IServiceCollection services) 
         {

@@ -5,28 +5,28 @@ namespace Cornflakes.LifetimeManagers
 {
     internal class ScopedLifetime : ILifetimeManager
     {
-        private readonly ConcurrentDictionary<IScope, object> instances;
-        private readonly IServiceCreationPipeline creationPipeline;
+        private readonly ConcurrentDictionary<IScope, IServiceContainer> containers;
+        private readonly IServiceFactory serviceFactory;
 
-        public ScopedLifetime(IServiceCreationPipeline creationPipeline)
+        public ScopedLifetime(IServiceFactory serviceFactory)
         {
-            this.creationPipeline = creationPipeline;
-            this.instances = new ConcurrentDictionary<IScope, object>();
+            this.serviceFactory = serviceFactory;
+            this.containers = new ConcurrentDictionary<IScope, IServiceContainer>();
         }
 
         public object GetInstance(IServiceProvider serviceProvider)
         {
-            return this.instances.GetOrAdd(serviceProvider.GetScope(), _ =>
+            return this.containers.GetOrAdd(serviceProvider.GetScope(), _ =>
             {
-                this.creationPipeline.Invoke(serviceProvider, out object instance);
+                IServiceContainer container = this.serviceFactory.Create(serviceProvider);
                 serviceProvider.GetScope().Subscribe(this.scopedDisposed);
-                return instance;
-            });
+                return container;
+            }).GetService(serviceProvider);
         }
 
         private void scopedDisposed(IScope scope)
         {
-            this.instances.Remove(scope, out _);
+            this.containers.Remove(scope, out _);
         }
     }
 }
