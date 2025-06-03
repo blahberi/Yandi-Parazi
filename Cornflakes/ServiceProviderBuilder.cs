@@ -1,23 +1,23 @@
-﻿using Cornflakes.LifetimeManagers;
+﻿using Cornflakes.Extensions;
+using Cornflakes.LifetimeManagers;
 
 namespace Cornflakes
 {
     public class ServiceProviderBuilder : IServiceProviderBuilder
     {
-        private readonly ProviderOfServices serviceProvider = new ProviderOfServices();
+        private readonly ServiceCollection services = new ServiceCollection();
 
         public ServiceProviderBuilder()
         {
-            
-            this.RegisterTransient<IProviderOfServices>(sp => sp);
+            this.services
+                .AddTransient<IServiceProvider>(sp => sp)
+                .AddTransient<IScopeFactory, ScopeFactory>()
+                .AddSingleton<IScope, GlobalScope>();
         }
 
-        public IServiceProviderBuilder RegisterService<TService>(ILifetimeManager creationStrategy)
+        public IServiceProviderBuilder RegisterService<TService>(ILifetimeManager lifetimeManager)
         {
-            this.serviceProvider.RegisterService(new ServiceDescriptor(
-                typeof(TService),
-                creationStrategy
-            ));
+            this.services.AddService<TService>(lifetimeManager);
             return this;
         }
 
@@ -25,14 +25,14 @@ namespace Cornflakes
         {
             foreach (ServiceDescriptor service in services)
             {
-                this.serviceProvider.RegisterService(service);
+                this.services.Add(service);
             }
             return this;
         }
 
-        public IProviderOfServices Build()
+        public IServiceProvider Build()
         {
-            return this.serviceProvider;
+            return new ServiceProvider(this.services);
         }
     }
 }

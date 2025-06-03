@@ -1,7 +1,7 @@
 ﻿namespace Cornflakes
 {
-    public interface IScopeFactory
+    internal interface IScopeFactory
     {
-        IScope CreateScope();
+        IScope CreateScope(IServiceProvider serviceProvider);
     }
 }

@@ -10,27 +10,26 @@ public static class DependencyResolver
     {
         return GenerateFactory(typeof(TImplementation));
     }
-
-    public static OnInitialized UseMemberInjection<TImplementation>(this OnInitialized onInitialized)
+    public static IServiceCreationPipelineBuilder WithMemberInjection<TImplementation>(this IServiceCreationPipelineBuilder pipelineBuilder)
     {
         OnInitialized? injector = TryCreateMemberInjector(typeof(TImplementation));
-        return injector == null ? onInitialized : onInitialized.Attach(injector);
+        return injector == null ? pipelineBuilder : pipelineBuilder.Add(injector);
     }
 
-    public static OnInitialized UseMemberInjection<TImplementation>(this ServiceFactory serviceFactory)
+    public static IServiceCreationPipelineBuilder WithMemberInjection<TImplementation>(this ServiceFactory serviceFactory)
     {
-        return serviceFactory.ToPipeline().UseMemberInjection<TImplementation>();
+        return serviceFactory.ToPipeline().WithMemberInjection<TImplementation>();
     }
 
     private static ServiceFactory GenerateFactory(Type implementationType)
     {
-        ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IProviderOfServices), "serviceProvider");
-        MethodInfo? GetService = typeof(IProviderOfServices)
-            .GetMethod(nameof(IProviderOfServices.GetService));
+        ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
+        MethodInfo? GetService = typeof(IServiceProvider)
+            .GetMethod(nameof(IServiceProvider.GetService));
 
         if (GetService == null)
         {
-            throw new MissingMethodException(nameof(IProviderOfServices), nameof(IProviderOfServices.GetService));
+            throw new MissingMethodException(nameof(IServiceProvider), nameof(IServiceProvider.GetService));
         }
 
         ConstructorInfo constructor = implementationType.GetConstructors().First();
@@ -50,7 +49,7 @@ public static class DependencyResolver
     private static readonly MethodInfo GetTypeFromHandle = 
         typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), BindingFlags.Static | BindingFlags.Public)!;
     private static readonly MethodInfo GetService =
-        typeof(IProviderOfServices).GetMethod(nameof(IProviderOfServices.GetService), BindingFlags.Instance | BindingFlags.Public)!;
+        typeof(IServiceProvider).GetMethod(nameof(IServiceProvider.GetService), BindingFlags.Instance | BindingFlags.Public)!;
     private static OnInitialized? TryCreateMemberInjector(Type implementationType)
     {
         FieldInfo[] fields = implementationType
@@ -69,7 +68,7 @@ public static class DependencyResolver
         DynamicMethod method = new DynamicMethod(
             $"Inject_{implementationType.Name}",
             null,
-            [typeof(object), typeof(IProviderOfServices)],
+            [typeof(IServiceProvider), typeof(object)],
             implementationType.Module,
             skipVisibility: true
         );
@@ -77,14 +76,14 @@ public static class DependencyResolver
         ILGenerator il = method.GetILGenerator();
         LocalBuilder typedTarget = il.DeclareLocal(implementationType);
 
-        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Ldarg_1);
         il.Emit(OpCodes.Castclass, implementationType);
         il.Emit(OpCodes.Stloc, typedTarget);
 
         foreach (FieldInfo field in fields)
         {
             il.Emit(OpCodes.Ldloc, typedTarget);
-            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldtoken, field.FieldType);
             il.Emit(OpCodes.Call, GetTypeFromHandle);
             il.Emit(OpCodes.Callvirt, GetService);
@@ -98,7 +97,7 @@ public static class DependencyResolver
             if (setMethod == null) continue;
 
             il.Emit(OpCodes.Ldloc, typedTarget);
-            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Ldarg_0);
             il.Emit(OpCodes.Ldtoken, prop.PropertyType);
             il.Emit(OpCodes.Call, GetTypeFromHandle);
             il.Emit(OpCodes.Callvirt, GetService);

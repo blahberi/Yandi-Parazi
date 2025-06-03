@@ -7,10 +7,8 @@
         {
             this.creationPipeline = creationPipeline;
         }
-        
-        public void Initialize(IProviderOfServices serviceProvider) {}
 
-        public object GetInstance(IProviderOfServices serviceProvider)
+        public object GetInstance(IServiceProvider serviceProvider)
         {
             this.creationPipeline.Invoke(serviceProvider, out object instance);
             return instance;

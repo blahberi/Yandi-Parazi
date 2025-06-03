@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cornflakes", "Cornflakes\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarking", "Benchmarking\Benchmarking.csproj", "{587B315B-EF84-402B-88ED-33A336DC39A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{0E1BC9AB-BC0B-4E6C-97BB-C23B13C39141}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{587B315B-EF84-402B-88ED-33A336DC39A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{587B315B-EF84-402B-88ED-33A336DC39A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{587B315B-EF84-402B-88ED-33A336DC39A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E1BC9AB-BC0B-4E6C-97BB-C23B13C39141}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E1BC9AB-BC0B-4E6C-97BB-C23B13C39141}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E1BC9AB-BC0B-4E6C-97BB-C23B13C39141}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E1BC9AB-BC0B-4E6C-97BB-C23B13C39141}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

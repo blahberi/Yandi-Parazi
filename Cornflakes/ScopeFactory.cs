@@ -2,8 +2,8 @@ namespace Cornflakes;
 
 internal class ScopeFactory : IScopeFactory
 {
-    public IScope CreateScope()
+    public IScope CreateScope(IServiceProvider serviceProvider)
     {
-        return new Scope();
+        return new Scope(serviceProvider);
     }
 }

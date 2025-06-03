@@ -13,7 +13,7 @@
 
         private bool Initialized => this.instance != null;
 
-        public void Initialize(IProviderOfServices serviceProvider)
+        public void Initialize(IServiceProvider serviceProvider)
         {
             if (this.Initialized) return;
             lock (this.lockObject)
@@ -23,7 +23,7 @@
             }
         }
 
-        public object GetInstance(IProviderOfServices serviceProvider)
+        public object GetInstance(IServiceProvider serviceProvider)
         {
             if (this.Initialized) return this.instance!;
             lock (this.lockObject)

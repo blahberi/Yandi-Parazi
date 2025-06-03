@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Cornflakes.Extensions;
 
 namespace Cornflakes
 {
@@ -7,24 +8,16 @@ namespace Cornflakes
         private readonly ConcurrentDictionary<Type, ServiceDescriptor> services;
         private bool isDisposed;
 
-        public ServiceProvider() 
+        public ServiceProvider(IServiceCollection services) 
         {
             this.services = new ConcurrentDictionary<Type, ServiceDescriptor>();
-            this.Scope = new Scope(this);
-        }
-
-        public void Initialize()
-        {
-            foreach (ServiceDescriptor service in this.services.Values) service.LifetimeManager.Initialize(this);
-        }
-
-        public IScope Scope { get; }
-
-        public void RegisterService(ServiceDescriptor descriptor)
-        {
-            if (!this.services.TryAdd(descriptor.ServiceType, descriptor))
+            
+            foreach (ServiceDescriptor service in services)
             {
-                throw new InvalidOperationException($"Can't register service of type {descriptor.ServiceType} since there is already a service registered with the same type.");
+                if (!this.services.TryAdd(service.ServiceType, service))
+                {
+                    throw new InvalidOperationException($"Can't register service of type {service.ServiceType} since there is already a service registered with the same type.");
+                }
             }
         }
 
@@ -35,17 +28,6 @@ namespace Cornflakes
                 return descriptor.LifetimeManager.GetInstance(this);
             }
             throw new KeyNotFoundException($"Service of type {serviceType} not found.");
-        }
-
-        public IScope CreateScope()
-        {
-            return this.Scope;
-        }
-
-        private ProviderOfServices(ConcurrentDictionary<Type, ServiceDescriptor> services)
-        {
-            this.services = services;
-            this.Scope = new Scope(this);
         }
     }
 }

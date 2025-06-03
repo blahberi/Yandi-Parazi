@@ -1,18 +1,20 @@
-﻿namespace Cornflakes
+﻿
+namespace Cornflakes
 {
-    internal class Scope : IScope
+    internal class Scope : IScope, IServiceProvider
     {
-        private bool isDisposed = false;
+        private bool isDisposed;
         private List<ScopeDisposalHandler> disposalHandlers = [];
+        private readonly IServiceProvider serviceProvider;
 
 
-        public Scope(IServiceProvider serviceProvider) 
+        public Scope(IServiceProvider serviceProvider)
         {
-            this.ServiceProvider = serviceProvider;
+            this.serviceProvider = serviceProvider;
         }
 
-        public IServiceProvider ServiceProvider { get; }
-
+        public IServiceProvider ServiceProvider => this;
+        
         public void Subscribe(ScopeDisposalHandler handler)
         {
             this.disposalHandlers.Add(handler);
@@ -28,6 +30,15 @@
         private void InvokeDisposalEvent()
         {
             this.disposalHandlers.ForEach(handler => handler(this));
+        }
+
+        public object? GetService(Type serviceType)
+        {
+            if (serviceType == typeof(IScope))
+            {
+                return this;
+            }
+            return this.serviceProvider.GetService(serviceType);
         }
     }
 }
