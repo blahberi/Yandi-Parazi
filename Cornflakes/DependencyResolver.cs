@@ -7,17 +7,17 @@ namespace Cornflakes;
 
 public static class DependencyResolver
 {
-    public static ServiceCreator GetServiceFactory<TImplementation>()
+    public static IServiceFactoryBuilder<TService> GetServiceFactory<TService, TImplementation>()
     {
-        return GenerateFactory(typeof(TImplementation));
+        return GenerateFactory<TService>(typeof(TImplementation)).ToFactory();
     }
+
     internal static ServiceInitializer? TryGetMemberInjector<TImplementation>()
     {
         return TryCreateMemberInjector(typeof(TImplementation));
     }
-    
 
-    private static ServiceCreator GenerateFactory(Type implementationType)
+    private static ServiceCreator<TService> GenerateFactory<TService>(Type implementationType)
     {
         ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
         MethodInfo? GetService = typeof(IServiceProvider)
@@ -34,15 +34,51 @@ public static class DependencyResolver
                 Expression.Call(
                     serviceProviderParameter,
                     GetService,
-                    Expression.Constant(p.ParameterType)), 
+                    Expression.Constant(p.ParameterType)),
                 p.ParameterType));
 
         Expression constructionExpression = Expression.New(constructor, arguments);
 
-        return Expression.Lambda<ServiceCreator>(constructionExpression, serviceProviderParameter).Compile();
+        return Expression.Lambda<ServiceCreator<TService>>(constructionExpression, serviceProviderParameter).Compile();
     }
-    
-    private static readonly MethodInfo GetTypeFromHandle = 
+
+    private static ServiceCreationWrapper<TService> GenerateCreationWrapper<TService>(Type implementationType)
+    {
+        ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
+        ParameterExpression instanceParameter = Expression.Parameter(typeof(TService), "instance");
+        MethodInfo? GetService = typeof(IServiceProvider)
+            .GetMethod(nameof(IServiceProvider.GetService));
+
+        if (GetService == null)
+        {
+            throw new MissingMethodException(nameof(IServiceProvider), nameof(IServiceProvider.GetService));
+        }
+
+        ConstructorInfo constructor = implementationType.GetConstructors().First();
+        IEnumerable<Expression> arguments = constructor.GetParameters()
+            .Select(p =>
+            {
+                if (p.ParameterType == typeof(TService))
+                {
+                    return (Expression)instanceParameter;
+                }
+                return Expression.Convert(
+                    Expression.Call(
+                        serviceProviderParameter,
+                        GetService,
+                        Expression.Constant(p.ParameterType)),
+                    p.ParameterType);
+            });
+
+        Expression constructionExpression = Expression.New(constructor, arguments);
+
+        return Expression.Lambda<ServiceCreationWrapper<TService>>(
+            constructionExpression,
+            serviceProviderParameter,
+            instanceParameter).Compile();
+    }
+
+    private static readonly MethodInfo GetTypeFromHandle =
         typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), BindingFlags.Static | BindingFlags.Public)!;
     private static readonly MethodInfo GetService =
         typeof(IServiceProvider).GetMethod(nameof(IServiceProvider.GetService), BindingFlags.Instance | BindingFlags.Public)!;
@@ -50,12 +86,12 @@ public static class DependencyResolver
     {
         FieldInfo[] fields = implementationType
             .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-            .Where(f => f.IsDefined(typeof(InjectAttribute), true))
+            .Where(f => f.IsDefined(typeof(InjectAttribute), true) && !f.FieldType.IsValueType)
             .ToArray();
 
         PropertyInfo[] props = implementationType
             .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-            .Where(p => p.IsDefined(typeof(InjectAttribute), true) && p.CanWrite)
+            .Where(p => p.IsDefined(typeof(InjectAttribute), true) && p is { CanWrite: true, PropertyType.IsValueType: false })
             .ToArray();
 
         if (fields.Length == 0 && props.Length == 0)

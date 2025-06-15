@@ -23,13 +23,13 @@ internal class SingletonLifetime : ILifetimeManager
         }
     }
 
-    public object GetInstance(IServiceProvider serviceProvider)
+    public IServiceContainer GetInstance(IServiceProvider serviceProvider)
     {
-        if (this.Initialized) return this.container!.GetService(serviceProvider);
+        if (this.Initialized) return this.container!;
         lock (this.lockObject)
         {
             if (!this.Initialized) this.Initialize(serviceProvider);
-            return this.container!.GetService(serviceProvider);
+            return this.container!;
         }
     }
 }

@@ -1,9 +1,3 @@
-﻿using Cornflakes.LifetimeManagers;
+﻿namespace Cornflakes;
 
-namespace Cornflakes
-{
-    public interface IServiceCollection : IList<ServiceDescriptor>
-    {
-        IServiceCollection AddService<TService>(ILifetimeManager lifetimeManager);
-    }
-}
+public interface IServiceCollection : IList<ServiceDescriptor>;

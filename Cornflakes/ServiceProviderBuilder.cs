@@ -1,38 +1,38 @@
 ﻿using Cornflakes.Extensions;
 using Cornflakes.LifetimeManagers;
 
-namespace Cornflakes
+namespace Cornflakes;
+
+public class ServiceProviderBuilder : IServiceProviderBuilder
 {
-    public class ServiceProviderBuilder : IServiceProviderBuilder
+    private readonly ServiceCollection services = [];
+
+    public ServiceProviderBuilder()
     {
-        private readonly ServiceCollection services = new ServiceCollection();
+        this.services
+            .AddTransient<IServiceProvider>(sp => sp)
+            .AddSingleton<IServiceProviderFactroy>(sp => new ServiceProviderFactory(this.services))
+            .AddSingleton<IScopeService, ScopeService>();
+    }
 
-        public ServiceProviderBuilder()
-        {
-            this.services
-                .AddTransient<IServiceProvider>(sp => sp)
-                .AddTransient<IScopeFactory, ScopeFactory>()
-                .AddSingleton<IScope, GlobalScope>();
-        }
+    public IServiceProviderBuilder RegisterService<TService>(ILifetimeManager lifetimeManager)
+    {
+        this.services.AddService<TService>(lifetimeManager);
+        return this;
+    }
 
-        public IServiceProviderBuilder RegisterService<TService>(ILifetimeManager lifetimeManager)
+    public IServiceProviderBuilder RegisterServices(IServiceCollection services)
+    {
+        foreach (ServiceDescriptor service in services)
         {
-            this.services.AddService<TService>(lifetimeManager);
-            return this;
+            this.services.Add(service);
         }
+        return this;
+    }
 
-        public IServiceProviderBuilder RegisterServices(IServiceCollection services)
-        {
-            foreach (ServiceDescriptor service in services)
-            {
-                this.services.Add(service);
-            }
-            return this;
-        }
-
-        public IServiceProvider Build()
-        {
-            return new ServiceProvider(this.services);
-        }
+    public IServiceProvider Build()
+    {
+        this.services.IsReadOnly = true;
+        return new ServiceProvider(this.services);
     }
 }

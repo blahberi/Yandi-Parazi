@@ -1,5 +1,3 @@
-using Cornflakes.LifetimeManagers;
-
 namespace Cornflakes;
 
 public interface IServiceContainer

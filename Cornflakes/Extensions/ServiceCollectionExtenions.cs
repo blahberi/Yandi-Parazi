@@ -3,11 +3,21 @@
 namespace Cornflakes.Extensions;
 public static class ServiceCollectionExtenions
 {
+    public static IServiceCollection AddService<TService>(this IServiceCollection collection, ILifetimeManager lifetimeManager)
+    {
+        collection.Add(new ServiceDescriptor(
+            typeof(TService), 
+            lifetimeManager
+        ));
+
+        return collection;
+    }
+    
     public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, IServiceFactory serviceFactory)
     {
         return collection.AddService<TService>(new TransientLifetime(serviceFactory));
     }
-    public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceCreator serviceCreator)
+    public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceCreator<TService> serviceCreator)
         where TService : class
     {
         return collection.AddTransient<TService>(serviceCreator.ToFactory().Build());
@@ -17,7 +27,7 @@ public static class ServiceCollectionExtenions
         where TImplementation : TService
     {
         return collection.AddService<TService>(new TransientLifetime(
-            DependencyResolver.GetServiceFactory<TImplementation>().WithMemberInjection<TImplementation>().Build()
+            DependencyResolver.GetServiceFactory<TService, TImplementation>().WithMemberInjection<TService, TImplementation>().Build()
         ));
     }
         
@@ -26,7 +36,7 @@ public static class ServiceCollectionExtenions
     {
         return collection.AddService<TService>(new SingletonLifetime(serviceFactory));
     }
-    public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceCreator serviceCreator)
+    public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceCreator<TService> serviceCreator)
         where TService : class
     {
         return collection.AddSingleton<TService>(serviceCreator.ToFactory().Build());
@@ -36,7 +46,7 @@ public static class ServiceCollectionExtenions
         where TImplementation : TService
     {
         return collection.AddService<TService>(new SingletonLifetime(
-            DependencyResolver.GetServiceFactory<TImplementation>().WithMemberInjection<TImplementation>().Build()
+            DependencyResolver.GetServiceFactory<TService, TImplementation>().WithMemberInjection<TService, TImplementation>().Build()
         ));
     }
     public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, TService instance)
@@ -51,7 +61,7 @@ public static class ServiceCollectionExtenions
         return collection.AddService<TService>(new ScopedLifetime(serviceFactory));
     }
     public static IServiceCollection AddScoped<TService>(this IServiceCollection collection,
-        ServiceCreator serviceCreator)
+        ServiceCreator<TService> serviceCreator)
         where TService : class
     {
         return collection.AddScoped<TService>(serviceCreator.ToFactory().Build());
@@ -61,7 +71,7 @@ public static class ServiceCollectionExtenions
         where TImplementation : TService
     {
         return collection.AddService<TService>(new ScopedLifetime(
-            DependencyResolver.GetServiceFactory<TImplementation>().WithMemberInjection<TImplementation>().Build()
+            DependencyResolver.GetServiceFactory<TService, TImplementation>().WithMemberInjection<TService, TImplementation>().Build()
         ));
     }
 }

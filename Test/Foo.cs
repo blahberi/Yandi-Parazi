@@ -9,12 +9,7 @@ public class Foo : IFoo
 
     public void FooMethod()
     {
-        Console.WriteLine("I am the Foo");
+        Console.WriteLine($"I am the Foo {this.GetHashCode()}");
         this.bar.BarMethod();
-    }
-    
-    public void OtherFooMethod()
-    {
-        Console.WriteLine("I am the Foo (the second time)");
     }
 }

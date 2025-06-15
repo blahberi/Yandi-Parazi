@@ -1,106 +1,98 @@
-﻿using Cornflakes.LifetimeManagers;
-using System.Collections;
+﻿using System.Collections;
 
-namespace Cornflakes
+namespace Cornflakes;
+
+public class ServiceCollection : IServiceCollection
 {
-    public class ServiceCollection : IServiceCollection
+    private bool isReadOnly;
+    public ServiceDescriptor this[int index] 
+    { 
+        get => this.Services[index];
+        set
+        {
+            this.ReadOnlyCheck();
+            this.Services[index] = value;
+        }
+    }
+
+    private List<ServiceDescriptor> Services { get; } = [];
+
+    public int Count => this.Services.Count;
+
+    public bool IsReadOnly
     {
-        public ServiceDescriptor this[int index] 
-        { 
-            get => this.Services[index];
-            set
-            {
-                if (this.IsReadOnly)
-                {
-                    this.ThrowReadOnlyException();
-                }
-
-                this.Services[index] = value;
-            }
-        }
-
-        private List<ServiceDescriptor> Services { get; } = [];
-
-        public IServiceCollection AddService<TService>(ILifetimeManager lifetimeManager)
+        get => this.isReadOnly;
+        set
         {
-            this.Add(new ServiceDescriptor(
-                typeof(TService), 
-                lifetimeManager
-            ));
-
-            return this;
+            this.ReadOnlyCheck();
+            this.isReadOnly = value;
         }
+    }
 
-        public int Count => this.Services.Count;
+    public void Add(ServiceDescriptor item)
+    {
+        this.Services.Add(item);
+    }
 
-        public bool IsReadOnly { get; set; }
 
-        public void Add(ServiceDescriptor item)
+    public void Clear()
+    {
+        this.Services.Clear();
+    }
+
+    public bool Contains(ServiceDescriptor item)
+    {
+        return this.Services.Contains(item);
+    }
+
+    public void CopyTo(ServiceDescriptor[] array, int arrayIndex)
+    {
+        this.Services.CopyTo(array, arrayIndex);
+    }
+
+    public IEnumerator<ServiceDescriptor> GetEnumerator()
+    {
+        return this.Services.GetEnumerator();
+    }
+
+    public int IndexOf(ServiceDescriptor item)
+    {
+        return this.Services.IndexOf(item);
+    }
+
+    public void Insert(int index, ServiceDescriptor item)
+    {
+        this.ReadOnlyCheck();
+        this.Services.Insert(index, item);
+    }
+
+    public bool Remove(ServiceDescriptor item)
+    {
+        this.ReadOnlyCheck();
+        return this.Services.Remove(item);
+    }
+
+    public void RemoveAt(int index)
+    {
+        this.ReadOnlyCheck();
+        this.Services.RemoveAt(index);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return this.Services.GetEnumerator();
+    }
+
+    private void ReadOnlyCheck()
+    {
+        if (this.IsReadOnly)
         {
-            this.Services.Add(item);
+            ThrowReadOnlyException();
         }
-
-
-        public void Clear()
-        {
-            this.Services.Clear();
-        }
-
-        public bool Contains(ServiceDescriptor item)
-        {
-            return this.Services.Contains(item);
-        }
-
-        public void CopyTo(ServiceDescriptor[] array, int arrayIndex)
-        {
-            this.Services.CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<ServiceDescriptor> GetEnumerator()
-        {
-            return Services.GetEnumerator();
-        }
-
-        public int IndexOf(ServiceDescriptor item)
-        {
-            return Services.IndexOf(item);
-        }
-
-        public void Insert(int index, ServiceDescriptor item)
-        {
-            if (IsReadOnly)
-            {
-                ThrowReadOnlyException();
-            }
-            Services.Insert(index, item);
-        }
-
-        public bool Remove(ServiceDescriptor item)
-        {
-            if (IsReadOnly)
-            {
-                ThrowReadOnlyException();
-            }
-            return Services.Remove(item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            if (IsReadOnly)
-            {
-                ThrowReadOnlyException();
-            }
-            Services.RemoveAt(index);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Services.GetEnumerator();
-        }
-
-        private void ThrowReadOnlyException()
-        {
-            throw new InvalidOperationException("Can't set readonly ServiceCollection");
-        }
+    }
+        
+    private static void ThrowReadOnlyException()
+    {
+        throw new InvalidOperationException("Can't set readonly ServiceCollection");
     }
 }

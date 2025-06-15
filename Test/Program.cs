@@ -8,15 +8,18 @@ class Program
     public static void Main(string[] args)
     {
         IServiceProvider serviceProvider = new ServiceProviderBuilder()
-            .RegisterSingleton<IFoo, Foo>()
+            .RegisterScoped<IFoo, Foo>()
             .RegisterSingleton<IBar, Bar>()
             .Build();
 
-        IFoo foo = serviceProvider.MustGetService<IFoo>();
-        foo.FooMethod();
-        foo.OtherFooMethod();
-
-        IBar bar = serviceProvider.MustGetService<IBar>();
-        bar.BarMethod();
+        serviceProvider.MustGetService<IFoo>().FooMethod();
+        IServiceProvider temp;
+        using (IScope scope = serviceProvider.CreateScope())
+        {
+            temp = scope.ServiceProvider;
+            scope.ServiceProvider.MustGetService<IFoo>().FooMethod();
+            scope.ServiceProvider.MustGetService<IFoo>().FooMethod();
+        }
+        temp.MustGetService<IFoo>().FooMethod();
     }
 }

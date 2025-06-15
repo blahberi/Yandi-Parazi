@@ -8,9 +8,9 @@
             this.serviceFactory = serviceFactory;
         }
 
-        public object GetInstance(IServiceProvider serviceProvider)
+        public IServiceContainer GetInstance(IServiceProvider serviceProvider)
         {
-            return this.serviceFactory.Create(serviceProvider).GetService(serviceProvider);
+            return this.serviceFactory.Create(serviceProvider);
         }
     }
 }

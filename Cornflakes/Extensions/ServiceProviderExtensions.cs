@@ -23,12 +23,12 @@
 
         public static IScope CreateScope(this IServiceProvider serviceProvider)
         {
-            return serviceProvider.MustGetService<IScopeFactory>().CreateScope(serviceProvider);
+            return serviceProvider.MustGetService<IScopeService>().CreateScope();
         }
 
-        public static IScope GetScope(this IServiceProvider serviceProvider)
+        public static IScope GetScope(this IServiceProvider scopedProvider)
         {
-            return serviceProvider.MustGetService<IScope>();
+            return scopedProvider.MustGetService<IScopeService>().GetScope(scopedProvider);
         }
     }
 }

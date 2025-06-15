@@ -2,6 +2,6 @@
 {
     public interface ILifetimeManager
     {
-        object GetInstance(IServiceProvider serviceProvider);
+        IServiceContainer GetInstance(IServiceProvider serviceProvider);
     }
 }
