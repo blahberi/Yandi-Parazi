@@ -1,4 +1,4 @@
-namespace Cornflakes;
+namespace Cornflakes.ServiceCreation;
 
 public interface IServiceContainer
 {

@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Cornflakes.Extensions;
 
-namespace Cornflakes;
+namespace Cornflakes.ServiceCreation;
 
 public static class DependencyResolver
 {

@@ -1,5 +1,6 @@
 ﻿using Cornflakes.Extensions;
 using Cornflakes.LifetimeManagers;
+using Cornflakes.Scopes;
 
 namespace Cornflakes;
 
@@ -15,9 +16,9 @@ public class ServiceProviderBuilder : IServiceProviderBuilder
             .AddSingleton<IScopeService, ScopeService>();
     }
 
-    public IServiceProviderBuilder RegisterService<TService>(ILifetimeManager lifetimeManager)
+    public IServiceProviderBuilder RegisterService(ServiceDescriptor serviceDescriptor)
     {
-        this.services.AddService<TService>(lifetimeManager);
+        this.services.Add(serviceDescriptor);
         return this;
     }
 

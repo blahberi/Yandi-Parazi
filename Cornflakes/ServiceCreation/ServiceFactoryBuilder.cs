@@ -1,4 +1,4 @@
-namespace Cornflakes;
+namespace Cornflakes.ServiceCreation;
 
 public class ServiceFactoryBuilder<TService> : IServiceFactoryBuilder<TService>
 {

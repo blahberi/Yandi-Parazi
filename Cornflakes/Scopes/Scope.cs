@@ -1,4 +1,4 @@
-﻿namespace Cornflakes;
+﻿namespace Cornflakes.Scopes;
 
 internal class Scope : IScope
 {

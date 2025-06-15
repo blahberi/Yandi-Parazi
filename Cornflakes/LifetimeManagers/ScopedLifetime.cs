@@ -1,5 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Cornflakes.Extensions;
+using Cornflakes.Scopes;
+using Cornflakes.ServiceCreation;
 
 namespace Cornflakes.LifetimeManagers
 {

@@ -1,4 +1,4 @@
-namespace Cornflakes;
+namespace Cornflakes.ServiceCreation;
 
 public delegate TService ServiceCreator<out TService>(IServiceProvider serviceProvider);
 public delegate TService ServiceCreationWrapper<TService>(IServiceProvider serviceProvider, TService instance);

@@ -1,9 +1,11 @@
-namespace Cornflakes;
+using System.Collections.Concurrent;
+
+namespace Cornflakes.Scopes;
 
 internal class ScopeService : IScopeService
 {
     private readonly IServiceProviderFactroy serviceProviderFactory;
-    private readonly Dictionary<IServiceProvider, IScope> scopes = new();
+    private readonly ConcurrentDictionary<IServiceProvider, IScope> scopes = new();
     
     public ScopeService(IServiceProviderFactroy serviceProviderFactory)
     {
@@ -26,7 +28,7 @@ internal class ScopeService : IScopeService
         this.scopes.TryAdd(scopedProvider, scope);
         scope.Subscribe(_ =>
         {
-            this.scopes.Remove(scopedProvider);
+            this.scopes.Remove(scopedProvider, out IScope _);
         });
         return scope;
     }

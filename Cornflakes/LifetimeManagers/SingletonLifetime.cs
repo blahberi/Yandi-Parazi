@@ -1,10 +1,12 @@
-﻿namespace Cornflakes.LifetimeManagers;
+﻿using Cornflakes.ServiceCreation;
+
+namespace Cornflakes.LifetimeManagers;
 
 internal class SingletonLifetime : ILifetimeManager
 {
     private IServiceContainer? container;
     private readonly IServiceFactory serviceFactory;
-    private readonly object lockObject = new object();
+    private readonly Lock lockObject = new();
 
     public SingletonLifetime(IServiceFactory serviceFactory)
     {

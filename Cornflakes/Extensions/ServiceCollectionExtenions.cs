@@ -1,4 +1,5 @@
 ﻿using Cornflakes.LifetimeManagers;
+using Cornflakes.ServiceCreation;
 
 namespace Cornflakes.Extensions;
 public static class ServiceCollectionExtenions
