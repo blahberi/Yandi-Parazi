@@ -1,5 +1,5 @@
 # Cornflakes
-Cornflakes is a lightweight, blazingly fast and highly extendable Dependency Injection framework for .NET written in C#.
+Cornflakes is a lightweight, highly extendable, abstract Dependency Injection framework for .NET that does not sacrifice on it's speed.
 <br>
 # Usage
 ## Defining Services
@@ -268,17 +268,16 @@ Custom lifetime managers can be useful when we need to perform some custom logic
 ```csharp
 class CustomTransientLifetime: ILifetimeManager
 {
-    private readonly ServiceCreationPipeline creationPipeline;
+    private readonly IServiceFactory serviceFactory;
 
-    public CustomTransientLifetime(ServiceCreationPipeline creationPipeline) 
+    public CustomTransientLifetime(IServiceFactory serviceFactory) 
     {
-        this.creationPipeline = serviceFactory;
+        this.serviceFactory = serviceFactory;
     }
 
-    public object GetInstance(IServiceProvider serviceProvider)
+    public IServiceContainer GetInstance(IServiceProvider serviceProvider)
     {
-        this.creationPipeline(serviceProvider, out object instance);
-        return instace;
+        return this.serviceFactory.Create(serviceProvider);
     }
 }
 ```
@@ -288,12 +287,13 @@ Now we can register services using our custom lifetime manager. For the examples
 ```csharp
 IServiceProvider serviceProvider = new ServiceProviderBuilder()
     .RegisterService<IFoo, Foo>(new CustomTransientLifetime(
-        DefaultServiceFactory.GetServiceFactory<Foo>())) // Default factory function
-    .RegisterService<IBar, Bar>(new CustomTransientLifetime(((serviceProvider) => {
-        // Custom factory function
+        DependencyResolver.GetServiceFactory<Foo>())
+    )
+    .RegisterService<IBar>(new CustomTransientLifetime(((serviceProvider) => {
+        // Custom service factory
         IFoo foo = serviceProvider.GetService<IFoo>();
         return new Bar(foo);
-    }).ToPipeline().WithMemberInjection<Bar>()))
+    }).WithMemberInjection<IBar, Bar>()))
     .Build();
 ```
 
@@ -301,7 +301,7 @@ IServiceProvider serviceProvider = new ServiceProviderBuilder()
 ```csharp
 class CustomSingletonLifetime: ILifetimeManager
 {
-    private readonly ServiceFactory serviceFactory;
+    private readonly IServiceFactory serviceFactory;
     private object instance;
     public CustomSingletonLifetime(ServiceFactory serviceFactory) 
     {
@@ -312,7 +312,7 @@ class CustomSingletonLifetime: ILifetimeManager
     {
         if (this.instance == null)
         {
-            this.instance = this.serviceFactory(serviceProvider);
+            this.instance = this.serviceFactory.Create(serviceProvider);
         }
         return this.instance;
     }

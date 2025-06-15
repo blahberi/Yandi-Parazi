@@ -5,10 +5,10 @@ namespace Cornflakes.LifetimeManagers;
 internal class SingletonLifetime : ILifetimeManager
 {
     private IServiceContainer? container;
-    private readonly IServiceFactory serviceFactory;
+    private readonly ServiceFactory serviceFactory;
     private readonly Lock lockObject = new();
 
-    public SingletonLifetime(IServiceFactory serviceFactory)
+    public SingletonLifetime(ServiceFactory serviceFactory)
     {
         this.serviceFactory = serviceFactory;
     }
@@ -21,7 +21,7 @@ internal class SingletonLifetime : ILifetimeManager
         lock (this.lockObject)
         {
             if (this.Initialized) return;
-            this.container = this.serviceFactory.Create(serviceProvider);
+            this.container = this.serviceFactory(serviceProvider);
         }
     }
 

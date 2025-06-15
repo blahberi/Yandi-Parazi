@@ -17,7 +17,7 @@ public static class ServiceFactoryExtensions
         return injector == null ? factoryBuilder : factoryBuilder.Add(injector);
     }
 
-    public static IServiceFactory WithMemberInjection<TService, TImplementation>(this ServiceCreator<TService> serviceCreator)
+    public static ServiceFactory WithMemberInjection<TService, TImplementation>(this ServiceCreator<TService> serviceCreator)
         where TService : class
         where TImplementation : TService
     {

@@ -3,32 +3,31 @@ using Cornflakes.Extensions;
 using Cornflakes.Scopes;
 using Cornflakes.ServiceCreation;
 
-namespace Cornflakes.LifetimeManagers
+namespace Cornflakes.LifetimeManagers;
+
+internal class ScopedLifetime : ILifetimeManager
 {
-    internal class ScopedLifetime : ILifetimeManager
+    private readonly ConcurrentDictionary<IScope, IServiceContainer> containers;
+    private readonly ServiceFactory serviceFactory;
+
+    public ScopedLifetime(ServiceFactory serviceFactory)
     {
-        private readonly ConcurrentDictionary<IScope, IServiceContainer> containers;
-        private readonly IServiceFactory serviceFactory;
+        this.serviceFactory = serviceFactory;
+        this.containers = new ConcurrentDictionary<IScope, IServiceContainer>();
+    }
 
-        public ScopedLifetime(IServiceFactory serviceFactory)
+    public IServiceContainer GetInstance(IServiceProvider serviceProvider)
+    {
+        return this.containers.GetOrAdd(serviceProvider.GetScope(), _ =>
         {
-            this.serviceFactory = serviceFactory;
-            this.containers = new ConcurrentDictionary<IScope, IServiceContainer>();
-        }
+            IServiceContainer container = this.serviceFactory(serviceProvider);
+            serviceProvider.GetScope().Subscribe(this.scopedDisposed);
+            return container;
+        });
+    }
 
-        public IServiceContainer GetInstance(IServiceProvider serviceProvider)
-        {
-            return this.containers.GetOrAdd(serviceProvider.GetScope(), _ =>
-            {
-                IServiceContainer container = this.serviceFactory.Create(serviceProvider);
-                serviceProvider.GetScope().Subscribe(this.scopedDisposed);
-                return container;
-            });
-        }
-
-        private void scopedDisposed(IScope scope)
-        {
-            this.containers.Remove(scope, out _);
-        }
+    private void scopedDisposed(IScope scope)
+    {
+        this.containers.Remove(scope, out _);
     }
 }

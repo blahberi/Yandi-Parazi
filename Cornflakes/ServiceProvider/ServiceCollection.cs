@@ -4,7 +4,6 @@ namespace Cornflakes;
 
 public class ServiceCollection : IServiceCollection
 {
-    private bool isReadOnly;
     public ServiceDescriptor this[int index] 
     { 
         get => this.Services[index];
@@ -15,19 +14,17 @@ public class ServiceCollection : IServiceCollection
         }
     }
 
+    public IServiceCollection Finalize()
+    {
+        this.IsReadOnly = true;
+        return this;
+    }
+
     private List<ServiceDescriptor> Services { get; } = [];
 
     public int Count => this.Services.Count;
 
-    public bool IsReadOnly
-    {
-        get => this.isReadOnly;
-        set
-        {
-            this.ReadOnlyCheck();
-            this.isReadOnly = value;
-        }
-    }
+    public bool IsReadOnly { get; private set; }
 
     public void Add(ServiceDescriptor item)
     {

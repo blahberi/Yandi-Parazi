@@ -7,10 +7,10 @@ class Program
 {
     public static void Main(string[] args)
     {
-        IServiceProvider serviceProvider = new ServiceProviderBuilder()
-            .RegisterTransient<IFoo, Foo>()
-            .RegisterSingleton<IBar, Bar>()
-            .Build();
+        IServiceProvider serviceProvider = new ServiceCollection()
+            .AddTransient<IFoo, Foo>()
+            .AddSingleton<IBar, Bar>()
+            .BuildServiceProvider();
 
         IFoo foo1 = serviceProvider.MustGetService<IFoo>();
         foo1.FooMethod();

@@ -1,18 +1,17 @@
 ﻿using Cornflakes.ServiceCreation;
 
-namespace Cornflakes.LifetimeManagers
-{
-    internal class TransientLifetime : ILifetimeManager
-    {
-        private readonly IServiceFactory serviceFactory;
-        public TransientLifetime(IServiceFactory serviceFactory) 
-        {
-            this.serviceFactory = serviceFactory;
-        }
+namespace Cornflakes.LifetimeManagers;
 
-        public IServiceContainer GetInstance(IServiceProvider serviceProvider)
-        {
-            return this.serviceFactory.Create(serviceProvider);
-        }
+internal class TransientLifetime : ILifetimeManager
+{
+    private readonly ServiceFactory serviceFactory;
+    public TransientLifetime(ServiceFactory serviceFactory) 
+    {
+        this.serviceFactory = serviceFactory;
+    }
+
+    public IServiceContainer GetInstance(IServiceProvider serviceProvider)
+    {
+        return this.serviceFactory(serviceProvider);
     }
 }

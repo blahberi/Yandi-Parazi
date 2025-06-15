@@ -7,9 +7,11 @@ namespace Cornflakes.ServiceCreation;
 
 public static class DependencyResolver
 {
-    public static IServiceFactoryBuilder<TService> GetServiceFactory<TService, TImplementation>()
+    public static ServiceFactory GetServiceFactory<TService, TImplementation>()
+        where TService : class
+        where TImplementation : TService
     {
-        return GenerateFactory<TService>(typeof(TImplementation)).ToFactory();
+        return GenerateFactory<TService>(typeof(TImplementation)).WithMemberInjection<TService, TImplementation>();
     }
 
     internal static ServiceInitializer? TryGetMemberInjector<TImplementation>()
@@ -40,42 +42,6 @@ public static class DependencyResolver
         Expression constructionExpression = Expression.New(constructor, arguments);
 
         return Expression.Lambda<ServiceCreator<TService>>(constructionExpression, serviceProviderParameter).Compile();
-    }
-
-    private static ServiceCreationWrapper<TService> GenerateCreationWrapper<TService>(Type implementationType)
-    {
-        ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
-        ParameterExpression instanceParameter = Expression.Parameter(typeof(TService), "instance");
-        MethodInfo? GetService = typeof(IServiceProvider)
-            .GetMethod(nameof(IServiceProvider.GetService));
-
-        if (GetService == null)
-        {
-            throw new MissingMethodException(nameof(IServiceProvider), nameof(IServiceProvider.GetService));
-        }
-
-        ConstructorInfo constructor = implementationType.GetConstructors().First();
-        IEnumerable<Expression> arguments = constructor.GetParameters()
-            .Select(p =>
-            {
-                if (p.ParameterType == typeof(TService))
-                {
-                    return (Expression)instanceParameter;
-                }
-                return Expression.Convert(
-                    Expression.Call(
-                        serviceProviderParameter,
-                        GetService,
-                        Expression.Constant(p.ParameterType)),
-                    p.ParameterType);
-            });
-
-        Expression constructionExpression = Expression.New(constructor, arguments);
-
-        return Expression.Lambda<ServiceCreationWrapper<TService>>(
-            constructionExpression,
-            serviceProviderParameter,
-            instanceParameter).Compile();
     }
 
     private static readonly MethodInfo GetTypeFromHandle =

@@ -1,9 +1,8 @@
 ﻿using Cornflakes.ServiceCreation;
 
-namespace Cornflakes.LifetimeManagers
+namespace Cornflakes.LifetimeManagers;
+
+public interface ILifetimeManager
 {
-    public interface ILifetimeManager
-    {
-        IServiceContainer GetInstance(IServiceProvider serviceProvider);
-    }
+    IServiceContainer GetInstance(IServiceProvider serviceProvider);
 }
