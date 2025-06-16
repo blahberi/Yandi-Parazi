@@ -13,7 +13,7 @@ class Program
             .AddSingleton<IBar, Bar>()
             .AddTransientDecorator<IFoo, FooLoggingDecorator>()
             .AddTransientDecorator<IFoo, AnotherFooDecorator>()
-            .BuildServiceProvider();
+            .BuildProvider();
 
         IFoo foo = serviceProvider.MustGetService<IFoo>();
         foo.FooMethod();

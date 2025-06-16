@@ -60,7 +60,7 @@ public static class ServiceCollectionExtensions
         return collection.AddService<TService>(decoratorLifetime);
     }
 
-    public static IServiceProvider BuildServiceProvider(this IServiceCollection collection)
+    public static IServiceProvider BuildProvider(this IServiceCollection collection)
     {
         collection
             .AddTransient<IServiceProvider>(sp => sp)
