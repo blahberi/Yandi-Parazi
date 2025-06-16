@@ -11,7 +11,7 @@ internal class ServiceProvider: IServiceProvider
         this.services = new ConcurrentDictionary<Type, ServiceDescriptor>();
         foreach (ServiceDescriptor service in services)
         {
-            this.services.TryAdd(service.ServiceType, service);
+            this.services[service.ServiceType] = service;
         }
     }
 
@@ -19,7 +19,7 @@ internal class ServiceProvider: IServiceProvider
     {
         if (this.services.TryGetValue(serviceType, out ServiceDescriptor? descriptor))
         {
-            return descriptor.LifetimeManager.GetInstance(this).GetService(this);
+            return descriptor.LifetimeManager.GetInstance(this);
         }
 
         return null;

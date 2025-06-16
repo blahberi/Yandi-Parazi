@@ -10,11 +10,11 @@ class Program
         IServiceProvider serviceProvider = new ServiceCollection()
             .AddTransient<IFoo, Foo>()
             .AddSingleton<IBar, Bar>()
+            .AddTransientDecorator<IFoo, FooLoggingDecorator>()
+            .AddTransientDecorator<IFoo, AnotherFooDecorator>()
             .BuildServiceProvider();
 
         IFoo foo1 = serviceProvider.MustGetService<IFoo>();
         foo1.FooMethod();
-        IFoo foo2 = serviceProvider.MustGetService<IFoo>();
-        foo2.FooMethod();
     }
 }

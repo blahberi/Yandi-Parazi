@@ -10,7 +10,7 @@ internal class TransientLifetime : ILifetimeManager
         this.serviceFactory = serviceFactory;
     }
 
-    public IServiceContainer GetInstance(IServiceProvider serviceProvider)
+    public object GetInstance(IServiceProvider serviceProvider)
     {
         return this.serviceFactory(serviceProvider);
     }

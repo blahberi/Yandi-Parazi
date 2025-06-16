@@ -27,14 +27,10 @@ public static class ServiceCollectionExtensions
     public static ServiceDescriptor FindService<TService>(this IServiceCollection collection)
     {
         Type serviceType = typeof(TService);
-        foreach (ServiceDescriptor service in collection)
-        {
-            if (service.ServiceType == serviceType)
-            {
-                return service;
-            }
-        }
-        throw new InvalidOperationException($"Service of type {serviceType.FullName} not found in the collection.");
+        ServiceDescriptor? descriptor = collection.LastOrDefault(s => s.ServiceType == serviceType);
+
+        return descriptor ?? throw new InvalidOperationException(
+            $"Service of type {serviceType.FullName} not found in the collection.");
     }
 
     public static IServiceProvider BuildServiceProvider(this IServiceCollection collection)
