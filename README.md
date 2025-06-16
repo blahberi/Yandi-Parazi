@@ -1,5 +1,5 @@
 # Cornflakes
-Cornflakes is a lightweight, fast, yet highly extendable Dependency Injection framework for .NET written in C#.
+Cornflakes is Dependency Injection framework for .NET written in C# that is lightweight and fast, yet abstract and easy to extend.
 # Usage
 ## Defining Services
 A **Service** refers to an interface which is implemented by a class, which we call the **Service Implementation**. A service implementation can depend on other services by requiring their type through the constructor.
