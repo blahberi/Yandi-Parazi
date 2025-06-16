@@ -425,3 +425,11 @@ public static class CustomSingletonLifetimeExtensions
     }
 }
 ```
+
+# Benchmarks
+| Framework      | Mean     | Error    | StdDev   | Median   | Gen0   | Allocated |
+|--------------- |---------:|---------:|---------:|---------:|-------:|----------:|
+| Cornflakes     | 17.52 us | 0.509 us | 1.501 us | 18.10 us |      - |      24 B |
+| MSDI           | 17.14 us | 0.371 us | 1.094 us | 17.63 us |      - |      24 B |
+| Autofac        | 17.37 us | 0.363 us | 1.070 us | 17.83 us | 0.1526 |    1312 B |
+| SimpleInjector | 17.28 us | 0.568 us | 1.673 us | 17.73 us |      - |      24 B |
