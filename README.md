@@ -257,7 +257,7 @@ IServiceProvider serviceProvider = new ServiceCollection()
 ```
 
 > [!NOTE]
-> Notice how the decorator can also have dependencies and the framework will automatically resolve them the same way the default service factory works.
+> Notice how the decorator can also have dependencies and the framework will automatically resolve them the same way it resolves dependencies for regular services.
 
 # Extending
 ## Custom Lifetime Managers
