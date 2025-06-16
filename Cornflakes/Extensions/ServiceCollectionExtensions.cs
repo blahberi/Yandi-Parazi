@@ -1,3 +1,4 @@
+using Cornflakes.Extensions.Lifetimes;
 using Cornflakes.LifetimeManagers;
 using Cornflakes.Scopes;
 using Cornflakes.ServiceCreation;

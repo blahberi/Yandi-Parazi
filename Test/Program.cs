@@ -1,5 +1,6 @@
 ﻿using Cornflakes;
 using Cornflakes.Extensions;
+using Cornflakes.Extensions.Lifetimes;
 
 namespace Test;
 
@@ -14,7 +15,7 @@ class Program
             .AddTransientDecorator<IFoo, AnotherFooDecorator>()
             .BuildServiceProvider();
 
-        IFoo foo1 = serviceProvider.MustGetService<IFoo>();
-        foo1.FooMethod();
+        IFoo foo = serviceProvider.MustGetService<IFoo>();
+        foo.FooMethod();
     }
 }

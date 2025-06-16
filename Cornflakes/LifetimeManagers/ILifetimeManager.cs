@@ -1,6 +1,4 @@
-﻿using Cornflakes.ServiceCreation;
-
-namespace Cornflakes.LifetimeManagers;
+﻿namespace Cornflakes.LifetimeManagers;
 
 public interface ILifetimeManager
 {

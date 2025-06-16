@@ -5,7 +5,7 @@ namespace Cornflakes.Extensions;
 
 public static class TransientLifetimeExtensions
 {
-    private static readonly LifetimeManagerFactory LifetimeManagerFactory = sf => new TransientLifetime(sf);
+    private static readonly LifetimeManagerFactory LifetimeManagerFactory = sf => new SingletonLifetime(sf);
     public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
     {
         return collection.AddService<TService>(new TransientLifetime(serviceFactory));

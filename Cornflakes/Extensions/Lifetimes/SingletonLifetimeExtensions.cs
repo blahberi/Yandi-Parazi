@@ -1,7 +1,7 @@
 using Cornflakes.LifetimeManagers;
 using Cornflakes.ServiceCreation;
 
-namespace Cornflakes.Extensions;
+namespace Cornflakes.Extensions.Lifetimes;
 
 public static class SingletonLifetimeExtensions
 {
