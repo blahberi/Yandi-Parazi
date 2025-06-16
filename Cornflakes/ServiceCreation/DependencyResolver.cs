@@ -7,11 +7,14 @@ namespace Cornflakes.ServiceCreation;
 
 public static class DependencyResolver
 {
-    public static ServiceFactory GetServiceFactory<TService, TImplementation>()
-        where TService : class
-        where TImplementation : TService
+    public static ServiceFactory GetServiceFactory<TImplementation>()
     {
-        return GenerateFactory<TService>(typeof(TImplementation)).WithMemberInjection<TService, TImplementation>();
+        return GenerateFactory(typeof(TImplementation)).WithMemberInjection<TImplementation>();
+    }
+    
+    internal static DecoratorCreator GetDecoratorCreator<TService, TImplementation>()
+    {
+        return GenerateDecoratorCreator(typeof(TService), typeof(TImplementation));
     }
 
     internal static ServiceInitializer? TryGetMemberInjector<TImplementation>()
@@ -19,13 +22,14 @@ public static class DependencyResolver
         return TryCreateMemberInjector(typeof(TImplementation));
     }
 
-    private static ServiceCreator<TService> GenerateFactory<TService>(Type implementationType)
+    private static ServiceCreator GenerateFactory(Type implementationType)
     {
         ParameterExpression serviceProviderParameter = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
+        
         MethodInfo? GetService = typeof(IServiceProvider)
             .GetMethod(nameof(IServiceProvider.GetService));
 
-        if (GetService == null)
+        if (GetService is null)
         {
             throw new MissingMethodException(nameof(IServiceProvider), nameof(IServiceProvider.GetService));
         }
@@ -41,7 +45,40 @@ public static class DependencyResolver
 
         Expression constructionExpression = Expression.New(constructor, arguments);
 
-        return Expression.Lambda<ServiceCreator<TService>>(constructionExpression, serviceProviderParameter).Compile();
+        return Expression.Lambda<ServiceCreator>(constructionExpression, serviceProviderParameter).Compile();
+    }
+    
+    private static DecoratorCreator GenerateDecoratorCreator(Type serviceType, Type implementationType)
+    {
+        ParameterExpression serviceProviderParam = Expression.Parameter(typeof(IServiceProvider), "serviceProvider");
+        ParameterExpression instanceParam = Expression.Parameter(typeof(object), "instance");
+
+        MethodInfo? getService = typeof(IServiceProvider).GetMethod(nameof(IServiceProvider.GetService));
+        if (getService is null)
+        {
+            throw new MissingMethodException(nameof(IServiceProvider), nameof(IServiceProvider.GetService));
+        }
+
+        ConstructorInfo? ctor = implementationType
+            .GetConstructors()
+            .FirstOrDefault(c => c.GetParameters().Any(p => p.ParameterType == serviceType));
+
+        if (ctor is null)
+            throw new InvalidOperationException(
+                $"Type '{implementationType.FullName}' must expose a constructor that takes '{serviceType.FullName}'.");
+
+        IEnumerable<Expression> args = ctor.GetParameters().Select(p =>
+            p.ParameterType == serviceType
+                ? Expression.Convert(instanceParam, serviceType)
+                : Expression.Convert(
+                      Expression.Call(serviceProviderParam, getService, Expression.Constant(p.ParameterType)),
+                      p.ParameterType));
+
+        NewExpression newExpr = Expression.New(ctor, args);
+
+        Expression body = Expression.Convert(newExpr, typeof(object));
+
+        return Expression.Lambda<DecoratorCreator>(body, serviceProviderParam, instanceParam).Compile();
     }
 
     private static readonly MethodInfo GetTypeFromHandle =

@@ -23,6 +23,11 @@ internal class ServiceContainer : IServiceContainer
         return this.instance;
     }
     
+    public object GetUnitialized()
+    {
+        return this.instance;
+    }
+    
     private void InitializeInstance(IServiceProvider serviceProvider)
     {
         if (this.initialized)

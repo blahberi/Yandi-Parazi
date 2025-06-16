@@ -1,10 +1,10 @@
 namespace Cornflakes.ServiceCreation;
 
-public delegate TService ServiceCreator<out TService>(IServiceProvider serviceProvider);
+public delegate object ServiceCreator(IServiceProvider serviceProvider);
 public delegate void ServiceInitializer(IServiceProvider serviceProvider, object instance);
 public delegate IServiceContainer ServiceFactory(IServiceProvider serviceProvider);
-public interface IServiceFactoryBuilder<TService>
+public interface IServiceFactoryBuilder
 {
-    IServiceFactoryBuilder<TService> Add(ServiceInitializer serviceInitializer);
+    IServiceFactoryBuilder Add(ServiceInitializer serviceInitializer);
     ServiceFactory Build();
 }

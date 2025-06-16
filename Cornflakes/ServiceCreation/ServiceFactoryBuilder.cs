@@ -1,16 +1,16 @@
 namespace Cornflakes.ServiceCreation;
 
-public class ServiceFactoryBuilder<TService> : IServiceFactoryBuilder<TService>
+public class ServiceFactoryBuilder : IServiceFactoryBuilder
 {
-    private readonly ServiceCreator<TService> serviceCreator;
+    private readonly ServiceCreator serviceCreator;
     private List<ServiceInitializer> onInitialized = [];
 
-    public ServiceFactoryBuilder(ServiceCreator<TService> serviceCreator)
+    public ServiceFactoryBuilder(ServiceCreator serviceCreator)
     {
         this.serviceCreator = serviceCreator;
     }
     
-    public IServiceFactoryBuilder<TService> Add(ServiceInitializer serviceInitializer)
+    public IServiceFactoryBuilder Add(ServiceInitializer serviceInitializer)
     {
         this.onInitialized.Add(serviceInitializer);
         return this;

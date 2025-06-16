@@ -11,7 +11,7 @@ public static class ScopedLifetimeExtensions
         return collection.AddService<TService>(new ScopedLifetime(serviceFactory));
     }
     public static IServiceCollection AddScoped<TService>(this IServiceCollection collection,
-        ServiceCreator<TService> serviceCreator)
+        ServiceCreator serviceCreator)
         where TService : class
     {
         return collection.AddScoped<TService>(serviceCreator.ToFactory().Build());
@@ -21,7 +21,7 @@ public static class ScopedLifetimeExtensions
         where TImplementation : TService
     {
         return collection.AddService<TService>(new ScopedLifetime(
-            DependencyResolver.GetServiceFactory<TService, TImplementation>()
+            DependencyResolver.GetServiceFactory<TImplementation>()
         ));
     }
 }

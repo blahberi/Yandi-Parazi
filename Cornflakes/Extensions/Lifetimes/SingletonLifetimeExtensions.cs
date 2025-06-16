@@ -11,7 +11,7 @@ public static class SingletonLifetimeExtensions
     {
         return collection.AddService<TService>(new SingletonLifetime(serviceFactory));
     }
-    public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceCreator<TService> serviceCreator)
+    public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceCreator serviceCreator)
         where TService : class
     {
         return collection.AddSingleton<TService>(serviceCreator.ToFactory().Build());
@@ -21,7 +21,7 @@ public static class SingletonLifetimeExtensions
         where TImplementation : TService
     {
         return collection.AddService<TService>(new SingletonLifetime(
-            DependencyResolver.GetServiceFactory<TService, TImplementation>()
+            DependencyResolver.GetServiceFactory<TImplementation>()
         ));
     }
     public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, TService instance)

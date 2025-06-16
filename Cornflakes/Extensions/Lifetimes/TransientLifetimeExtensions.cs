@@ -9,7 +9,7 @@ public static class TransientLifetimeExtensions
     {
         return collection.AddService<TService>(new TransientLifetime(serviceFactory));
     }
-    public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceCreator<TService> serviceCreator)
+    public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceCreator serviceCreator)
         where TService : class
     {
         return collection.AddTransient<TService>(serviceCreator.ToFactory().Build());
@@ -19,7 +19,7 @@ public static class TransientLifetimeExtensions
         where TImplementation : TService
     {
         return collection.AddService<TService>(new TransientLifetime(
-            DependencyResolver.GetServiceFactory<TService, TImplementation>()
+            DependencyResolver.GetServiceFactory<TImplementation>()
         ));
     }
 }

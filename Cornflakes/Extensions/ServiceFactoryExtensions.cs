@@ -4,23 +4,19 @@ namespace Cornflakes.Extensions;
 
 public static class ServiceFactoryExtensions
 {
-    public static IServiceFactoryBuilder<TService> ToFactory<TService>(this ServiceCreator<TService> serviceCreator)
+    public static IServiceFactoryBuilder ToFactory(this ServiceCreator serviceCreator)
     {
-        return new ServiceFactoryBuilder<TService>(serviceCreator);
+        return new ServiceFactoryBuilder(serviceCreator);
     }
     
-    public static IServiceFactoryBuilder<TService> WithMemberInjection<TService, TImplementation>(this IServiceFactoryBuilder<TService> factoryBuilder)
-        where TService : class
-        where TImplementation : TService
+    public static IServiceFactoryBuilder WithMemberInjection<TImplementation>(this IServiceFactoryBuilder factoryBuilder)
     {
         ServiceInitializer? injector = DependencyResolver.TryGetMemberInjector<TImplementation>();
         return injector == null ? factoryBuilder : factoryBuilder.Add(injector);
     }
 
-    public static ServiceFactory WithMemberInjection<TService, TImplementation>(this ServiceCreator<TService> serviceCreator)
-        where TService : class
-        where TImplementation : TService
+    public static ServiceFactory WithMemberInjection<TImplementation>(this ServiceCreator serviceCreator)
     {
-        return serviceCreator.ToFactory().WithMemberInjection<TService, TImplementation>().Build();
+        return serviceCreator.ToFactory().WithMemberInjection<TImplementation>().Build();
     }
 }
