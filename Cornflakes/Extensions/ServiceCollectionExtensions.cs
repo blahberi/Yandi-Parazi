@@ -1,5 +1,6 @@
 using Cornflakes.LifetimeManagers;
 using Cornflakes.Scopes;
+using Cornflakes.ServiceCreation;
 
 namespace Cornflakes.Extensions;
 
@@ -13,6 +14,16 @@ public static class ServiceCollectionExtensions
         ));
 
         return collection;
+    }
+
+    public static IServiceCollection AddService<TService, TImplementation>(this IServiceCollection collection,
+        LifetimeManagerFactory lifetimeManagerFactory)
+        where TService : class
+        where TImplementation : class, TService
+    {
+        return collection.AddService<TService>(lifetimeManagerFactory(
+            DependencyResolver.GetServiceFactory<TImplementation>()
+        ));
     }
     
     public static IServiceCollection AddServices(this IServiceCollection collection, IServiceCollection services)
@@ -31,6 +42,21 @@ public static class ServiceCollectionExtensions
 
         return descriptor ?? throw new InvalidOperationException(
             $"Service of type {serviceType.FullName} not found in the collection.");
+    }
+    
+    public static IServiceCollection Decorate<TService, TDecorator>(this IServiceCollection collection, 
+        LifetimeManagerFactory lifetimeManagerFactory)
+        where TService : class
+        where TDecorator : class, TService
+    {
+        ServiceDescriptor originalDescriptor = collection.FindService<TService>();
+        DecoratorFactory decoratorFactory = DependencyResolver.GetDecoratorFactory<TService, TDecorator>();
+        ILifetimeManager decoratorLifetime = lifetimeManagerFactory(sp =>
+        {
+            object originalInstance = originalDescriptor.LifetimeManager.GetInstance(sp);
+            return decoratorFactory(sp, originalInstance);
+        });
+        return collection.AddService<TService>(decoratorLifetime);
     }
 
     public static IServiceProvider BuildServiceProvider(this IServiceCollection collection)

@@ -5,7 +5,7 @@ namespace Cornflakes.Extensions;
 
 public static class SingletonLifetimeExtensions
 {
-    
+    private static readonly LifetimeManagerFactory LifetimeManagerFactory = sf => new SingletonLifetime(sf);
     public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
         where TService : class
     {
@@ -14,11 +14,9 @@ public static class SingletonLifetimeExtensions
     
     public static IServiceCollection AddSingleton<TService, TImplementation>(this IServiceCollection collection)
         where TService : class
-        where TImplementation : TService
+        where TImplementation : class, TService
     {
-        return collection.AddService<TService>(new SingletonLifetime(
-            DependencyResolver.GetServiceFactory<TImplementation>()
-        ));
+        return collection.AddService<TService, TImplementation>(LifetimeManagerFactory);
     }
     
     public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, TService instance)
@@ -31,13 +29,6 @@ public static class SingletonLifetimeExtensions
         where TService : class
         where TDecorator : class, TService
     {
-        ServiceDescriptor originalDescriptor = collection.FindService<TService>();
-        DecoratorFactory decoratorFactory = DependencyResolver.GetDecoratorFactory<TService, TDecorator>();
-        ILifetimeManager decoratorLifetime = new SingletonLifetime(sp =>
-        {
-            object originalInstance = originalDescriptor.LifetimeManager.GetInstance(sp);
-            return decoratorFactory(sp, originalInstance);
-        });
-        return collection.AddService<TService>(decoratorLifetime);
+        return collection.Decorate<TService, TDecorator>(sf => new SingletonLifetime(sf));
     }
 }
