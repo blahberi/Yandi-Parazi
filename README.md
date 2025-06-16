@@ -82,7 +82,8 @@ IFoo fooService = serviceProvider.GetService<IFoo>()
 fooService.FooMethod();
 ```
 
-Notice how the framework automatically resolves the dependencies of the service implementation.
+> [!NOTE]
+>Notice how the framework automatically resolves the dependencies of the service implementation.
 
 > [!IMPORTANT]
 > The service being requested, all of its dependencies, and all of their dependencies (and so on, recursively), need to be registered. Thus in this example, the service with `IFoo` needs to be registered. And if the service implemenetation depends on the service `IBar`, then it needs to be registered as well.
@@ -221,6 +222,42 @@ IServiceProvider serviceProvider = new ServiceCollection()
     .AddSingleton<IFoo>(DependencyResolver.GetServiceFactory<Foo>())
     .BuildProvider();
 ```
+
+## Decorators
+Cornflakes allows for registering **Decorator Services**. A decorator service is a service that implements some `TService` but also directly depends on `TService`. For example, here is a logging decorator for `IFoo`, `FooLoggingDecorator`:
+
+```csharp
+class FooLoggingDecorator : IFoo
+{
+    private readonly IFoo foo;
+    private readonly ILogger logger;
+
+    public FooLoggingDecorator(IFoo foo, ILogger logger) 
+    {
+        this.foo = foo;
+    }
+
+    public FooMethod() 
+    {
+        this.logger.Log("calling FooMethod");
+        this.foo.FooMethod();
+        this.logger.Log("FooMethod called");
+    }
+}
+```
+
+We can now register this decorator like so:
+
+```csharp
+IServiceProvider serviceProvider = new ServiceCollection()
+    .AddSingleton<IFoo, Foo>()
+    .AddSingleton<ILogger, Logger>()
+    .AddSingletonDecorator<IFoo, FooLoggingDecorator>()
+    .BuildProvider()
+```
+
+> [!NOTE]
+> Notice how the decorator can also have dependencies and the framework will automatically resolve them the same way the default service factory works.
 
 # Extending
 ## Custom Lifetime Managers
