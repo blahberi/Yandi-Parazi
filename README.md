@@ -343,7 +343,7 @@ public static class CustomTransientLifetimeExtensions
 ```
 
 ### Full examlpe
-As a full example for adding custom lifetime managers, we will now implement `CustomSingletonLifetime` which works like the. For the sake of simplicity, we will not implement thread-safty. However, rest assured, all the build-in lifetime managers are fully thread safe.
+As a full example for adding custom lifetime managers, we will now implement `CustomSingletonLifetime` which works like the `Singleton` lifetime manager. For the sake of simplicity, we will not implement thread-safty. However, rest assured, all the build-in lifetime managers are fully thread safe.
 
 ```csharp
 class CustomSingletonLifetime: ILifetimeManager
