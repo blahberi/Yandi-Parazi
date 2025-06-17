@@ -252,12 +252,14 @@ We can now register this decorator like so:
 IServiceProvider serviceProvider = new ServiceCollection()
     .AddSingleton<IFoo, Foo>()
     .AddSingleton<ILogger, Logger>()
-    .AddSingletonDecorator<IFoo, FooLoggingDecorator>()
+    .AddTransientDecorator<IFoo, FooLoggingDecorator>()
     .BuildProvider()
 ```
 
 > [!NOTE]
-> Notice how the decorator can also have dependencies and the framework will automatically resolve them the same way it resolves dependencies for regular services.
+> - Notice how the decorator can also have dependencies and the framework will automatically resolve them the same way it resolves dependencies for regular services.
+> - Also notice that decorators can have their own lifetime. In the above example we are registering a singleton service with a transient decorator. This means, that everytime we request `IFoo`, we will get a new instance `FooLoggingDecorator` that has the same instance of `Foo`
+
 
 # Extending
 ## Custom Lifetime Managers
@@ -298,61 +300,15 @@ IServiceProvider serviceProvider = new ServiceCollection()
 ```
 
 ### Extending the registration
-Notice that currently, registering services with our custom lifetime managers is a bit verbose, unlike the built-in lifetime managers. We can extend the `IServiceCollection` to provide a more fluent API for registering services with custom lifetime managers.
+Notice that currently, registering services with our custom lifetime managers is a bit verbose, unlike the built-in lifetime managers. We can extend `IServiceCollection` to provide a more fluent API for registering services with custom lifetime managers.
 
-```csharp
-public static class CustomTransientLifetimeExtensions
-{
-    public static IServiceCollection AddCustomTransient<TService>(
-        this IServiceCollection collection, ServiceFactory serviceFactory)
-    {
-        return collection.AddService<TService>(new CustomTransientLifetime(serviceFactory));
-    }
-
-    public static IServiceCollection AddCustomTransient<TService, TImplementation>(
-        this IServiceCollection collection)
-    {
-        return collection.AddService<TService>(new CustomTransientLifetime(
-            DependencyResolver.GetServiceFactory<TImplementation>()));
-    }
-
-    public static IServiceCollection AddCustomTransientDecorator<TService, TDecorator>(this IServiceCollection collection)
-        where TService : class
-        where TDecorator : class, TService
-    {
-        ServiceDescriptor originalDescriptor = collection.FindService<TService>();
-        DecoratorFactory decoratorFactory = DependencyResolver.GetDecoratorFactory<TService, TDecorator>();
-        ILifetimeManager decoratorLifetime = new CustomTransientLifetime(sp =>
-        {
-            object originalInstance = originalDescriptor.LifetimeManager.GetInstance(sp);
-            return decoratorFactory(sp, originalInstance);
-        });
-        return collection.AddService<TService>(decoratorLifetime);
-    }
-}
-```
-
-Now the service registration process is much more fluent and streamlined, and is comparable to the built-in lifetime managers.
-
-```csharp
-IServiceCollection serviceProvider = new ServiceCollection()
-    .AddCustomTransient<IFoo, Foo>() // Default factory function
-    .AddCustomTransient<IBar>(serviceProvider => {
-        // Custom factory function
-        IFoo foo = serviceProvider.GetService<IFoo>();
-        return new Bar(foo);
-    })
-    .BuildProvider();
-```
-
-### Lifetime Manager Factories
-Notice that if we have multiple custom lifetime managers, the `IServiceCollection` extensions, will start getting repetitive. This is because the only real difference between the extensions, is the lifetime manager. To solve this, we use `LifetimeManagerFactory`, a delegate which receives a service factory and returns a lifetime manager.
+`IServiceCollection` already comes with extension methods for handling service registartion with custom lifetime managers. These extension methods rely on `LifetimeManagerFactory`, a delegate that receives a service factory and returns a lifetime manager.
 
 ```csharp
 ILifetimeManager LifetimeManagerFactory(ServiceFactory serviceFactory)
 ```
 
-`IServiceCollection` already comes with extension methods for handling service registartion with lifetime manager factories. So we can refactor our extensions like so:
+So we can add extension methods for our `CustomTransientLifetime` like so:
 
 ```csharp
 public static class CustomTransientLifetimeExtensions
@@ -377,6 +333,19 @@ public static class CustomTransientLifetimeExtensions
         return collection.Decorate<TService, TDecorator>(LifetimeManagerFactory);
     }
 }
+```
+
+And now registering services with our custom lifetime manager becomes as fluent as the built-in registration.
+
+```csharp
+IServiceCollection serviceProvider = new ServiceCollection()
+    .AddCustomTransient<IFoo, Foo>() // Default factory function
+    .AddCustomTransient<IBar>(serviceProvider => {
+        // Custom factory function
+        IFoo foo = serviceProvider.GetService<IFoo>();
+        return new Bar(foo);
+    })
+    .BuildProvider();
 ```
 
 ### Full examlpe
