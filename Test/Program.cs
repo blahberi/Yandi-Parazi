@@ -1,6 +1,6 @@
-﻿using Cornflakes;
-using Cornflakes.Extensions;
-using Cornflakes.Extensions.Lifetimes;
+﻿using Yandi;
+using Yandi.Extensions;
+using Yandi.Extensions.Lifetimes;
 
 namespace Test;
 
