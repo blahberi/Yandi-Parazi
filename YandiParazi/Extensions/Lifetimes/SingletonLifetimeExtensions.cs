@@ -9,22 +9,22 @@ public static class SingletonLifetimeExtensions
     public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
         where TService : class
     {
-        return collection.AddService<TService>(new SingletonLifetime(serviceFactory));
+        return collection.AddService<TService>(LifetimeManagerFactory, serviceFactory);
     }
-    
+
     public static IServiceCollection AddSingleton<TService, TImplementation>(this IServiceCollection collection)
         where TService : class
         where TImplementation : class, TService
     {
         return collection.AddService<TService, TImplementation>(LifetimeManagerFactory);
     }
-    
+
     public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, TService instance)
         where TService : class
     {
         return collection.AddTransient<TService>(sp => instance);
     }
-    
+
     public static IServiceCollection AddSingletonDecorator<TService, TDecorator>(this IServiceCollection collection)
         where TService : class
         where TDecorator : class, TService
