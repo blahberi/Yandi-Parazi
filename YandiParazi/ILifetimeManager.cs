@@ -1,4 +1,4 @@
-﻿namespace Yandi.LifetimeManagers;
+namespace Yandi;
 
 public interface ILifetimeManager
 {

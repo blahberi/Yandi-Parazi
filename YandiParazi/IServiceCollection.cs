@@ -1,6 +1,6 @@
-﻿namespace Yandi;
+namespace Yandi;
 
 public interface IServiceCollection : IList<ServiceDescriptor>
 {
-    IServiceCollection Finalize();
+    void Finish();
 }

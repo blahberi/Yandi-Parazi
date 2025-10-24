@@ -1,11 +1,11 @@
-using Yandi.LifetimeManagers;
-using Yandi.ServiceCreation;
+using Yandi.Abstractions;
+using Yandi.Core.LifetimeManagers;
 
-namespace Yandi.Extensions;
+namespace Yandi.Extensions.Lifetimes;
 
 public static class TransientLifetimeExtensions
 {
-    private static readonly LifetimeManagerFactory LifetimeManagerFactory = sf => new TransientLifetime(sf);
+    private static readonly LifetimeManagerFactory LifetimeManagerFactory = static sf => new TransientLifetime(sf);
     public static IServiceCollection AddTransient<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
         where TService : class
     {

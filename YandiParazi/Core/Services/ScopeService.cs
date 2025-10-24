@@ -1,17 +1,12 @@
 using System.Collections.Concurrent;
 
-namespace Yandi.Scopes;
+namespace Yandi.Core.Services;
 
-internal class ScopeService : IScopeService
+internal class ScopeService(IServiceProviderFactroy serviceProviderFactory) : IScopeService
 {
-    private readonly IServiceProviderFactroy serviceProviderFactory;
+    private readonly IServiceProviderFactroy serviceProviderFactory = serviceProviderFactory;
     private readonly ConcurrentDictionary<IServiceProvider, IScope> scopes = new();
-    
-    public ScopeService(IServiceProviderFactroy serviceProviderFactory)
-    {
-        this.serviceProviderFactory = serviceProviderFactory;
-    }
-    
+
     public IScope CreateScope()
     {
         return this.CreateScope(this.serviceProviderFactory.Create());
@@ -24,11 +19,11 @@ internal class ScopeService : IScopeService
 
     private IScope CreateScope(IServiceProvider scopedProvider)
     {
-        IScope scope = new Scope(scopedProvider);
+        using IScope scope = new Scope(scopedProvider);
         this.scopes.TryAdd(scopedProvider, scope);
         scope.Subscribe(_ =>
         {
-            this.scopes.Remove(scopedProvider, out IScope _);
+            this.scopes.Remove(scopedProvider, out _);
         });
         return scope;
     }

@@ -1,11 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace Yandi;
 
 public class ServiceCollection : IServiceCollection
 {
-    public ServiceDescriptor this[int index] 
-    { 
+    public ServiceDescriptor this[int index]
+    {
         get => this.Services[index];
         set
         {
@@ -14,10 +14,9 @@ public class ServiceCollection : IServiceCollection
         }
     }
 
-    public IServiceCollection Finalize()
+    public void Finish()
     {
         this.IsReadOnly = true;
-        return this;
     }
 
     private List<ServiceDescriptor> Services { get; } = [];

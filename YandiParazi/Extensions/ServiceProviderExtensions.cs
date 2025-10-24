@@ -1,4 +1,5 @@
-﻿using Yandi.Scopes;
+using Yandi.Core;
+using Yandi.Core.Services;
 
 namespace Yandi.Extensions;
 
@@ -16,11 +17,9 @@ public static class ServiceProviderExtensions
 
     public static TService MustGetService<TService>(this IServiceProvider serviceProvider)
     {
-        if (serviceProvider.TryGetService(out TService? service))
-        {
-            return service!;
-        }
-        throw new InvalidOperationException($"Service of type {typeof(TService)} not found.");
+        return serviceProvider.TryGetService(out TService? service)
+            ? service!
+            : throw new InvalidOperationException($"Service of type {typeof(TService)} not found.");
     }
 
     public static IScope CreateScope(this IServiceProvider serviceProvider)

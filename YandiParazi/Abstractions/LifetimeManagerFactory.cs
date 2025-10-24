@@ -1,5 +1,3 @@
-using Yandi.ServiceCreation;
-
-namespace Yandi.LifetimeManagers;
+namespace Yandi.Abstractions;
 
 public delegate ILifetimeManager LifetimeManagerFactory(ServiceFactory serviceFactory);

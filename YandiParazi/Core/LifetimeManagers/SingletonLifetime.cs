@@ -1,17 +1,12 @@
-﻿using Yandi.ServiceCreation;
+using Yandi.Abstractions;
 
-namespace Yandi.LifetimeManagers;
+namespace Yandi.Core.LifetimeManagers;
 
-internal class SingletonLifetime : ILifetimeManager
+internal class SingletonLifetime(ServiceFactory serviceFactory) : ILifetimeManager
 {
     private object? instance;
-    private readonly ServiceFactory serviceFactory;
+    private readonly ServiceFactory serviceFactory = serviceFactory;
     private readonly Lock lockObject = new();
-
-    public SingletonLifetime(ServiceFactory serviceFactory)
-    {
-        this.serviceFactory = serviceFactory;
-    }
 
     private bool Initialized => this.instance != null;
 

@@ -1,12 +1,12 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 
-namespace Yandi;
+namespace Yandi.Core.Services;
 
-internal class ServiceProvider: IServiceProvider
+internal class ServiceProvider : IServiceProvider
 {
     private readonly ConcurrentDictionary<Type, ServiceDescriptor> services;
 
-    public ServiceProvider(IServiceCollection services) 
+    public ServiceProvider(IServiceCollection services)
     {
         this.services = new ConcurrentDictionary<Type, ServiceDescriptor>();
         foreach (ServiceDescriptor service in services)
@@ -17,11 +17,8 @@ internal class ServiceProvider: IServiceProvider
 
     public object? GetService(Type serviceType)
     {
-        if (this.services.TryGetValue(serviceType, out ServiceDescriptor? descriptor))
-        {
-            return descriptor.LifetimeManager.GetInstance(this);
-        }
-
-        return null;
+        return this.services.TryGetValue(serviceType, out ServiceDescriptor? descriptor)
+            ? descriptor.LifetimeManager.GetInstance(this)
+            : null;
     }
 }

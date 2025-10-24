@@ -1,6 +1,6 @@
-﻿namespace Yandi.Scopes;
+namespace Yandi.Core.Services;
 
-internal interface IScopeService
+public interface IScopeService
 {
     IScope CreateScope();
     IScope GetScope(IServiceProvider scopedProvider);

@@ -1,4 +1,4 @@
-﻿namespace Yandi.Scopes;
+namespace Yandi.Core;
 
 public delegate void ScopeDisposalHandler(IScope scope);
 public interface IScope : IDisposable

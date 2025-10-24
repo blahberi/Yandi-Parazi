@@ -1,11 +1,11 @@
-using Yandi.LifetimeManagers;
-using Yandi.ServiceCreation;
+using Yandi.Abstractions;
+using Yandi.Core.LifetimeManagers;
 
 namespace Yandi.Extensions.Lifetimes;
 
 public static class SingletonLifetimeExtensions
 {
-    private static readonly LifetimeManagerFactory LifetimeManagerFactory = sf => new SingletonLifetime(sf);
+    private static readonly LifetimeManagerFactory LifetimeManagerFactory = static sf => new SingletonLifetime(sf);
     public static IServiceCollection AddSingleton<TService>(this IServiceCollection collection, ServiceFactory serviceFactory)
         where TService : class
     {
@@ -29,6 +29,6 @@ public static class SingletonLifetimeExtensions
         where TService : class
         where TDecorator : class, TService
     {
-        return collection.Decorate<TService, TDecorator>(sf => new SingletonLifetime(sf));
+        return collection.Decorate<TService, TDecorator>(LifetimeManagerFactory);
     }
 }

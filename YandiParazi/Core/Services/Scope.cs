@@ -1,17 +1,12 @@
-﻿namespace Yandi.Scopes;
+namespace Yandi.Core.Services;
 
-internal class Scope : IScope
+internal class Scope(IServiceProvider serviceProvider) : IScope
 {
     private bool isDisposed;
-    private List<ScopeDisposalHandler> disposalHandlers = [];
+    private readonly List<ScopeDisposalHandler> disposalHandlers = [];
 
-    public Scope(IServiceProvider serviceProvider)
-    {
-        this.ServiceProvider = serviceProvider;
-    }
+    public IServiceProvider ServiceProvider { get; } = serviceProvider;
 
-    public IServiceProvider ServiceProvider { get; }
-        
     public void Subscribe(ScopeDisposalHandler handler)
     {
         this.disposalHandlers.Add(handler);
@@ -19,7 +14,11 @@ internal class Scope : IScope
 
     public void Dispose()
     {
-        if (this.isDisposed) return;
+        if (this.isDisposed)
+        {
+            return;
+        }
+
         this.isDisposed = true;
         this.InvokeDisposalEvent();
     }
