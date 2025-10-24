@@ -1,7 +1,7 @@
 using Yandi.Abstractions;
 using Yandi.Core.LifetimeManagers;
 
-namespace Yandi.Extensions.Lifetimes;
+namespace Yandi.Extensions;
 
 public static class TransientLifetimeExtensions
 {

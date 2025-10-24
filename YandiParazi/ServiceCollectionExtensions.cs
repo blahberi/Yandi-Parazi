@@ -1,9 +1,9 @@
 using Yandi.Abstractions;
 using Yandi.Core.Services;
-using Yandi.Extensions.Lifetimes;
+using Yandi.Extensions;
 using Yandi.Wiring;
 
-namespace Yandi.Extensions;
+namespace Yandi;
 
 public static class ServiceCollectionExtensions
 {
@@ -65,11 +65,11 @@ public static class ServiceCollectionExtensions
     {
         ServiceDescriptor originalDescriptor = collection.FindService<TService>();
         DecoratorFactory decoratorFactory = Decorators.GetFactory<TService, TDecorator>();
-        ServiceFactory serviceFactory = sp =>
+        object serviceFactory(IServiceProvider sp)
         {
             object originalInstance = originalDescriptor.LifetimeManager.GetInstance(sp);
             return decoratorFactory(sp, originalInstance);
-        };
+        }
         return collection.AddService<TService>(lifetimeManagerFactory, serviceFactory);
     }
 

@@ -1,7 +1,7 @@
 using Yandi.Core;
 using Yandi.Core.Services;
 
-namespace Yandi.Extensions;
+namespace Yandi;
 
 public static class ServiceProviderExtensions
 {
