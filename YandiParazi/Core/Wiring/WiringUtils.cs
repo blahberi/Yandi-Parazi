@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Yandi.Wiring;
+namespace Yandi.Core.Wiring;
 
 internal static class WiringUtils
 {

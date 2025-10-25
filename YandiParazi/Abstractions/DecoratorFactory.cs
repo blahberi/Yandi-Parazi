@@ -1,3 +1,3 @@
 namespace Yandi.Abstractions;
 
-public delegate object DecoratorFactory(IServiceProvider serviceProvider, object instance);
+public delegate object DecoratorFactory(object instance, IServiceProvider serviceProvider);

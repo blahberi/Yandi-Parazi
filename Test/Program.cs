@@ -1,4 +1,4 @@
-﻿using Yandi;
+using Yandi;
 using Yandi.Extensions;
 using Yandi.Extensions.Lifetimes;
 
@@ -10,7 +10,7 @@ class Program
     {
         IServiceProvider serviceProvider = new ServiceCollection()
             .AddTransient<IFoo, Foo>()
-            .AddSingleton<IBar, Bar>()
+            .AddSingleInstance<IBar, Bar>()
             .AddTransientDecorator<IFoo, FooLoggingDecorator>()
             .AddTransientDecorator<IFoo, AnotherFooDecorator>()
             .BuildProvider();

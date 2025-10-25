@@ -2,7 +2,7 @@ using Yandi.Abstractions;
 
 namespace Yandi.Core.LifetimeManagers;
 
-internal class SingletonLifetime(ServiceFactory serviceFactory) : ILifetimeManager
+internal class SingleInstanceLifetime(ServiceFactory serviceFactory) : ILifetimeManager
 {
     private object? instance;
     private readonly ServiceFactory serviceFactory = serviceFactory;

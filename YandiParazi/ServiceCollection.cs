@@ -4,6 +4,14 @@ namespace Yandi;
 
 public class ServiceCollection : IServiceCollection
 {
+    public ServiceCollection(IServiceCollection collection)
+    {
+        foreach (ServiceDescriptor service in collection)
+        {
+            this.Add(service);
+        }
+    }
+
     public ServiceDescriptor this[int index]
     {
         get => this.Services[index];
@@ -12,11 +20,6 @@ public class ServiceCollection : IServiceCollection
             this.ReadOnlyCheck();
             this.Services[index] = value;
         }
-    }
-
-    public void Finish()
-    {
-        this.IsReadOnly = true;
     }
 
     private List<ServiceDescriptor> Services { get; } = [];
@@ -86,7 +89,7 @@ public class ServiceCollection : IServiceCollection
             ThrowReadOnlyException();
         }
     }
-        
+
     private static void ThrowReadOnlyException()
     {
         throw new InvalidOperationException("Can't set readonly ServiceCollection");

@@ -12,18 +12,19 @@ internal class ScopeService(IServiceProviderFactroy serviceProviderFactory) : IS
         return this.CreateScope(this.serviceProviderFactory.Create());
     }
 
-    public IScope GetScope(IServiceProvider scopedProvider)
+    public IScope GetScope(IServiceProvider serviceProvider)
     {
-        return this.scopes.TryGetValue(scopedProvider, out IScope? scope) ? scope : this.CreateScope(scopedProvider);
+        return this.scopes.TryGetValue(serviceProvider, out IScope? scope)
+            ? scope : this.CreateScope(serviceProvider);
     }
 
-    private IScope CreateScope(IServiceProvider scopedProvider)
+    private IScope CreateScope(IServiceProvider serviceProvider)
     {
-        using IScope scope = new Scope(scopedProvider);
-        this.scopes.TryAdd(scopedProvider, scope);
+        using IScope scope = new Scope(serviceProvider);
+        this.scopes.TryAdd(serviceProvider, scope);
         scope.Subscribe(_ =>
         {
-            this.scopes.Remove(scopedProvider, out _);
+            this.scopes.Remove(serviceProvider, out _);
         });
         return scope;
     }

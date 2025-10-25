@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Yandi.Abstractions;
 
-namespace Yandi.Wiring;
+namespace Yandi.Core.Wiring;
 
 public static class Decorators
 {

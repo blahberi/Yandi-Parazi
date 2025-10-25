@@ -7,7 +7,7 @@ public class Foo : IFoo
     {
         this.bar = bar;
     }
-    
+
     public void FooMethod()
     {
         Console.WriteLine($"I am the Foo {this.GetHashCode()}");
