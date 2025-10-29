@@ -17,5 +17,7 @@ class Program
 
         IFoo foo = serviceProvider.MustGetService<IFoo>();
         foo.FooMethod();
+
+        Console.ReadLine();
     }
 }

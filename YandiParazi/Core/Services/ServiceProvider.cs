@@ -1,12 +1,13 @@
 using System.Collections.Concurrent;
+using Yandi.Abstractions;
 
 namespace Yandi.Core.Services;
 
-internal class ServiceProvider : IServiceProvider
+internal class Container : IServiceProvider
 {
     private readonly ConcurrentDictionary<Type, ServiceDescriptor> services;
 
-    public ServiceProvider(IServiceCollection services)
+    public Container(IServiceCollection services)
     {
         this.services = new ConcurrentDictionary<Type, ServiceDescriptor>();
         foreach (ServiceDescriptor service in services)

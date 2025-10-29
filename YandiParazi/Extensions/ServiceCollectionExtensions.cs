@@ -75,9 +75,10 @@ public static class ServiceCollectionExtensions
 
     public static IServiceProvider BuildProvider(this IServiceCollection collection)
     {
-        collection.AddTransient<IServiceProvider>(static sp => sp)
+        _ = collection.AddTransient<IServiceProvider>(static sp => sp)
             .AddSingleInstance<IServiceProviderFactroy>(new ServiceProviderFactory(collection))
             .AddSingleInstance<IScopeService, ScopeService>();
-        return new ServiceProvider(collection)
+
+        return new Container(collection);
     }
 }

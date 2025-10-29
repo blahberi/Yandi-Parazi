@@ -6,6 +6,6 @@ internal class ServiceProviderFactory(IServiceCollection services) : IServicePro
 
     public IServiceProvider Create()
     {
-        return new ServiceProvider(this.services);
+        return new Container(this.services);
     }
 }

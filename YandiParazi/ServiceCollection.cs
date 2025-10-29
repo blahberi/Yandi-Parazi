@@ -4,6 +4,8 @@ namespace Yandi;
 
 public class ServiceCollection : IServiceCollection
 {
+    public ServiceCollection() { }
+
     public ServiceCollection(IServiceCollection collection)
     {
         foreach (ServiceDescriptor service in collection)

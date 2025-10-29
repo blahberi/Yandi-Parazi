@@ -27,6 +27,6 @@ public static class Decorators
 
         NewExpression newExpr = Expression.New(constructor, args);
         Expression body = Expression.Convert(newExpr, typeof(object));
-        return Expression.Lambda<DecoratorFactory>(body, serviceProviderParam, instanceParam).Compile();
+        return Expression.Lambda<DecoratorFactory>(body, instanceParam, serviceProviderParam).Compile();
     }
 }
